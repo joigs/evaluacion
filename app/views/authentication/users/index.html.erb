@@ -4,9 +4,7 @@
   <div class="mb-6">
     <%= link_to "Crear nuevo usuario", new_user_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-blue-400 bg-gray-800 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out" %>
 
-    <% if false %>
-    <%= link_to "Crear nuevo cliente", new_client_users_path, class: "inline-flex items-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-blue-400 bg-gray-800 hover:bg-blue-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out" %>
-    <% end %>
+
   </div>
 
 
@@ -42,9 +40,7 @@
                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hover:text-blue-700">
                   <p class="hover:text-blue-700">Correo electrónico</p>
                 </th>
-                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hover:text-blue-700">
-                  <p class="hover:text-blue-700">Profesión</p>
-                </th>
+
                 <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider hover:text-blue-700">
                   <p class="hover:text-blue-700">Acciones</p>
                 </th>
@@ -66,14 +62,10 @@
 
                   <td class="px-6 py-4 whitespace-normal break-words">
                     <p class="text-white">
-                      <% if user.admin.nil? %>
-                        Gestión
-                      <% elsif user.admin %>
+                      <% if user.admin %>
                         Administrador
-                      <% elsif user.empresa.nil? %>
-                        Inspector
                       <% else %>
-                        <%= user.empresa %>
+                        Usuario
                       <% end %>
                     </p>
                   </td>
@@ -82,9 +74,7 @@
                     <p class="text-white"><%= user.email %></p>
                   </td>
 
-                  <td class="px-6 py-4 whitespace-normal break-words">
-                    <p class="text-white"><%= user.profesion %></p>
-                  </td>
+
 
                   <td class="px-6 py-4">
                     <%= link_to "Ver usuario",

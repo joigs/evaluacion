@@ -61,6 +61,6 @@ class FacturacionPolicy < BasePolicy
   end
 
   def method_missing(m, *args, &block)
-    Current.user.gestion
+    Current.user
   end
 end

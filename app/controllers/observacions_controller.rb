@@ -50,6 +50,8 @@ class ObservacionsController < ApplicationController
   def calcular_momento(facturacion)
     if facturacion.factura.present?
       "Emisión de factura"
+    elsif facturacion.fecha_inspeccion.present?
+      "Definición fecha de evaluación"
     elsif facturacion.oc.present?
       "Orden de compra"
     elsif facturacion.entregado.present?

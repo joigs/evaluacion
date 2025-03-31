@@ -40,28 +40,11 @@
         <p class="mb-0"><strong>Resultado:</strong> <%= @facturacion.resultado %></p>
         <p class="mb-0"><strong>Orden de compra (OC):</strong> <%= format_date(@facturacion.oc) %></p>
         <p class="mb-0"><strong>Factura:</strong> <%= format_date(@facturacion.factura) %></p>
-        <p class="mb-0"><strong>Fecha de inspección:</strong> <%= format_date(@facturacion.fecha_inspeccion) %></p>
+        <p class="mb-0"><strong>Fecha de evaluación:</strong> <%= format_date(@facturacion.fecha_inspeccion) %></p>
       </div>
 
 
-        <div class="mt-6">
-          <% if Current.user.solicitar && Current.user.super %>
-            <%= link_to "Descargar Plantilla de Solicitud",
-                        download_solicitud_template_facturacion_path(@facturacion),
-                        class: "px-3 py-2 rounded bg-orange-600 text-gray-900 font-bold hover:bg-orange-700 mt-2" %>
-          <% end %>
 
-          <% if Current.user.cotizar %>
-            <div class="flex flex-col items-start">
-              <%= link_to "Plantilla de Cotización",
-                          download_cotizacion_template_facturacion_path(@facturacion),
-                          class: "px-3 py-2 rounded bg-teal-600 text-gray-900 font-bold hover:bg-teal-700 mt-2" %>
-              <span class="text-sm text-gray-600">Advertencia: Revisar que los datos sean correctos.</span>
-
-            </div>
-          <% end %>
-
-        </div>
 
 
       <div class="mt-6">
@@ -132,6 +115,7 @@
       { name: "Emisión de Cotización", date: @facturacion.emicion },
       { name: "Entrega a Cliente", date: @facturacion.entregado },
       { name: "Orden de Compra", date: @facturacion.oc },
+      { name: "Fecha Evaluación", date: @facturacion.fecha_inspeccion },
       { name: "Factura", date: @facturacion.factura }
     ] %>
 
@@ -251,10 +235,58 @@
 <% end %>
 
 
+<% if Current.user.cotizar && @facturacion.oc.present? && @facturacion.fecha_inspeccion.blank? && @facturacion.resultado != "Rechazado" %>
+  <div class="bg-gray-900 p-4 rounded-lg shadow-md mt-8">
+    <h3 class="text-xl font-semibold text-white mb-4">Registrar Fecha de Evaluación</h3>
+
+    <%= form_with(model: @facturacion,
+                  url: update_fecha_inspeccion_facturacion_path(@facturacion),
+                  method: :patch,
+                  local: true,
+                  class: "space-y-4") do |form| %>
+
+      <div>
+        <%= form.label :fecha_inspeccion, "Fecha de Evaluación", class: "block text-gray-300 font-bold mb-2" %>
+        <div class="relative">
+          <%= form.text_field :fecha_inspeccion,
+                              placeholder: "Selecciona una fecha",
+                              id: "datepicker",
+                              class: "block w-full px-3 py-2 bg-gray-700 text-white border \
+                                      border-gray-600 rounded-md shadow-sm focus:outline-none \
+                                      focus:ring focus:ring-blue-500" %>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <%= form.submit "Registrar Evaluación",
+                        class: "w-full bg-green-600 hover:bg-green-700 text-white font-bold \
+                                py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <script>
+      function initializeFlatpickr() {
+          flatpickr("#datepicker", {
+              dateFormat: "d-m-Y", // Formato dd-mm-yyyy
+              minDate: "01-01-2020", // Fecha mínima, ajusta a conveniencia
+              maxDate: "31-12-3000", // Fecha máxima, ajusta a conveniencia
+              locale: "es",         // Idioma español
+              static: false,        // Compatible con móviles
+              altInput: true,
+              altFormat: "d-m-Y",
+          });
+      }
+
+      document.addEventListener("DOMContentLoaded", initializeFlatpickr);
+      document.addEventListener("turbo:render", initializeFlatpickr);
+      document.addEventListener("turbo:load", initializeFlatpickr);
+  </script>
+<% end %>
 
 
 
-<% if Current.user.cotizar && @facturacion.oc.present? && @facturacion.factura.nil? && @facturacion.resultado != "Rechazado" %>
+<% if Current.user.cotizar && @facturacion.fecha_inspeccion.present? && @facturacion.factura.nil? && @facturacion.resultado != "Rechazado" %>
   <div class="bg-gray-900 p-4 rounded-lg shadow-md mt-8">
     <h3 class="text-xl font-semibold text-white mb-4">Subir Factura</h3>
 

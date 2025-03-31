@@ -147,32 +147,9 @@ class FacturacionsController < ApplicationController
       if valid_file_type?(@facturacion.cotizacion_doc_file, %w[application/msword application/vnd.openxmlformats-officedocument.wordprocessingml.document]) &&
         valid_file_type?(@facturacion.cotizacion_pdf_file, %w[application/pdf])
 
-        venv_python = Rails.root.join('ascensor', 'bin', 'python').to_s
-        script_path = Rails.root.join('app', 'scripts', 'extract_table_value.py').to_s
 
-        require 'tempfile'
-        temp_file = Tempfile.new(["facturacion_doc", ".docx"])
-        temp_file.binmode
-        temp_file.write(@facturacion.cotizacion_doc_file.blob.download)
-        temp_file.flush
 
-        cmd = "#{venv_python} \"#{script_path}\" --docx \"#{temp_file.path}\""
-        table_value = `#{cmd}`.strip
-
-        temp_file.close
-        temp_file.unlink
-
-        if match = table_value.match(/(\d+(?:[.,]\d+)?)/)
-          number_str = match[1].gsub(/\s+/, '').tr(',', '.')
-          extracted_number = number_str.to_f
-          puts "Número extraído: #{extracted_number}"
-        else
-          flash.now[:alert] = "No se pudo extraer un número válido de la tabla."
-          render :show, status: :unprocessable_entity
-          return
-        end
-
-        @facturacion.update(emicion: Date.current, precio: extracted_number)
+        @facturacion.update(emicion: Date.current)
 
         notification = Notification.find_by(notification_type: :solicitud_pendiente)
         notification.facturacions.delete(@facturacion) if notification
@@ -238,6 +215,16 @@ class FacturacionsController < ApplicationController
     end
   end
 
+  def update_fecha_inspeccion
+    @facturacion = Facturacion.find(params[:id])
+
+    if @facturacion.update(facturacion_params)
+      redirect_to @facturacion, notice: "Fecha de evaluación actualizada con éxito."
+    else
+      flash.now[:alert] = "No se pudo actualizar la fecha de evaluación."
+      render :show, status: :unprocessable_entity
+    end
+  end
 
 
 
@@ -419,31 +406,6 @@ class FacturacionsController < ApplicationController
     redirect_to facturacions_path
   end
 
-  def download_solicitud_template
-    file_path = Rails.root.join("app", "templates", "solicitud_template.xlsx")
-    if File.exist?(file_path)
-      send_file file_path, filename: "Solicitud_Template.xlsx", type: "application/vnd.ms-excel"
-    else
-      redirect_to facturacion_path(@facturacion), alert: "La plantilla de solicitud no está disponible."
-    end
-  end
-
-  def download_cotizacion_template
-    @facturacion = Facturacion.find(params[:id])
-
-    begin
-      # Llamar al servicio para generar el documento
-      new_doc_path = DocumentGeneratorCotizacion.generate_document(@facturacion.id)
-
-      send_file new_doc_path,
-                type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-                disposition: 'attachment',
-                filename: File.basename(new_doc_path)
-    rescue StandardError => e
-      flash[:alert] = "Error al generar la plantilla de cotización: #{e.message}"
-      redirect_to facturacion_path(@facturacion)
-    end
-  end
 
 
 
@@ -461,6 +423,7 @@ class FacturacionsController < ApplicationController
       :emicion,
       :entregado,
       :resultado,
+      :fecha_inspeccion,
       :oc,
       :factura,
       :solicitud_file,

@@ -13,35 +13,20 @@
 
     <p class="text-gray-400 mt-2">
       <strong class="text-gray-200">Rol:</strong>
-      <% if user.admin.nil? %>
-        Gestión
-      <% elsif user.admin %>
+
+      <% if user.admin %>
         Administrador
-      <% elsif user.empresa.nil? %>
-        Inspector
       <% else %>
-        <%= user.empresa %>
+        Usuario
       <% end %>
     </p>
 
 
-  <p class="text-gray-400 mt-2">
-    <strong class="text-gray-200">¿Hace facturación?</strong>
-    <% if user.gestion %>
-    <%= "Sí" %>
-      <% else %>
-    <%= "No" %>
-    <% end %>
-  </p>
+
 
     <p class="text-gray-400 mt-2">
       <strong class="text-gray-200">Correo electrónico:</strong>
       <%= user.email %>
-    </p>
-
-    <p class="text-gray-400 mt-2">
-      <strong class="text-gray-200">Profesión:</strong>
-      <%= user.profesion %>
     </p>
 
 

@@ -7,7 +7,8 @@ class Observacion < ApplicationRecord
     "Emisión de cotización" => 1,
     "Entregado a cliente" => 2,
     "Orden de compra" => 3,
-    "Emisión de factura" => 4
+    "Definición fecha de evaluación" => 4,
+    "Emisión de factura" => 5
   }
   validates :texto, presence: true
 end

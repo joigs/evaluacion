@@ -2,39 +2,29 @@ class PrincipalPolicy < BasePolicy
 
 
   def new
-    Current.user.admin || Current.user.crear
+    Current.user.admin
   end
 
   def create
-    Current.user.admin || Current.user.crear
+    Current.user.admin
   end
 
   def edit
-    Current.user.admin || Current.user.empresa != nil || Current.user.crear
+    Current.user.admin
   end
 
   def update
-    Current.user.admin || Current.user.empresa != nil || Current.user.crear
+    Current.user.admin
   end
 
   def destroy
-    Current.user.admin || Current.user.crear
+    Current.user.admin
   end
 
-  def no_conformidad
-    Current.user.admin || Current.user.empresa != nil || Current.user.crear
-  end
 
-  def estado_activos
-    Current.user.admin || Current.user.empresa != nil || Current.user.crear
-  end
-
-  def defectos_activos
-    Current.user.admin || Current.user.empresa != nil || Current.user.crear
-  end
 
 
   def method_missing(m, *args, &block)
-    Current.user.admin || Current.user.crear
+    Current.user.admin
   end
 end

@@ -18,12 +18,6 @@ module Authorization
       raise NotAuthorizedError unless is_allowed
     end
 
-    def inspection_not_modifiable!(inspection)
-      unless Current.user.admin? && inspection.ins_date > Date.today
-        flash[:alert] = "No puedes modificar esta inspección."
-        redirect_to inspection_path(inspection)
-      end
-    end
 
   end
 end

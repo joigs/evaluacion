@@ -8,18 +8,12 @@ class User < ApplicationRecord
       "username",
       "real_name",
       "email",
-      "profesion",
       "created_at",
       "updated_at"
     ]
   end
 
-  def self.ransackable_associations(auth_object = nil)
-    # List of associations you want to be searchable
-    [
-      "inspections",  # Assuming inspections are related records that could be relevant for searches
-    ]
-  end
+
 
   validates :username, presence: true, uniqueness: true,
             length: { in: 3..15 },
@@ -32,15 +26,12 @@ class User < ApplicationRecord
 
 
 
-  has_many :inspection_users, dependent: :destroy
-  has_many :inspections, through: :inspection_users
 
   has_many :user_permisos, dependent: :destroy
   has_many :permisos, through: :user_permisos
   has_many :observacions, dependent: :nullify
 
 
-  belongs_to :principal, optional: true, touch: false
 
 
   def solicitar
@@ -51,33 +42,9 @@ class User < ApplicationRecord
     permisos.exists?(nombre: 'cotizar')
   end
 
-  def certificar
-    permisos.exists?(nombre: 'certificar')
-  end
-
-  def inspeccionar
-    permisos.exists?(nombre: 'inspeccionar')
-  end
-
-  def crear
-    permisos.exists?(nombre: 'crear')
-  end
 
 
 
-  scope :con_permiso_inspeccionar, -> {
-    joins(:permisos).where(permisos: { nombre: 'inspeccionar' })
-  }
-
-  scope :admin_false_o_inspeccionar, -> {
-    left_joins(:permisos)
-      .where(admin: false)
-      .or(
-        left_joins(:permisos)
-          .where(permisos: { nombre: 'inspeccionar' })
-      )
-      .distinct
-  }
 
 
 end
