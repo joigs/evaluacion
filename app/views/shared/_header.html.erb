@@ -1,10 +1,8 @@
 
 <div class="flex items-start">
-  <% unless request.path =~ /\/revisions\/\d+\/edit/ || request.path =~ /\/ladder_revisions\/\d+\/edit/ %>
     <div class="mr-4">
       <%= link_to image_tag("logo-header.png", alt: "Chilena de Certificaciones", class: "h-16 w-auto cursor-pointer"), "#{home_path}", class: "inline-block" %>
     </div>
-  <% end %>
 
 
   <% if Current.user %>
@@ -14,7 +12,7 @@
     </div>
     <div class="text-lg font-semibold">
       <% if Current.user.admin %>
-        <%= "Certificador" %>
+        <%= "Evaluador" %>
       <% else %>
         <%= "Usuario" %>
       <% end %>

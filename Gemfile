@@ -77,28 +77,19 @@ gem "requestjs-rails", "~> 0.0.11"
 
 gem 'tailwindcss-rails', '~> 2.6'
 
-#remplazar texto de un docx
-gem 'docx_replace'
 
-#dependencia de omnidocx
-gem 'mime-types'
 
-#añadir imagenes a docx
-gem 'omnidocx'
 
 #manejo de archivos excel
 gem 'roo'
 gem 'activerecord-import'
 
-#busqueda en mysql
-gem 'minidusen'
+
 
 #supuestas dependencias de roo
 gem 'rubyzip'
 gem 'nokogiri'
 
-gem 'image_processing', '~> 1.2'
-gem 'mini_magick'
 
 gem 'docx'
 #para revisar periodicamente si vencio una certificacion
@@ -107,11 +98,6 @@ gem 'whenever', require: false
 #para busquedas
 gem 'ransack'
 
-gem 'pdflatex'
-gem 'fileutils'
-gem 'fastimage'
 
-gem 'chartkick'
-gem 'groupdate'
 
 gem 'write_xlsx'
