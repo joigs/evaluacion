@@ -407,6 +407,16 @@ class FacturacionsController < ApplicationController
   end
 
 
+  def update_price
+    @facturacion = Facturacion.find(params[:id])
+
+    if @facturacion.update(precio_params)
+      render json: { success: true, precio: @facturacion.precio }
+    else
+      render json: { success: false, errors: @facturacion.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
 
 
   private
@@ -419,6 +429,7 @@ class FacturacionsController < ApplicationController
     params.require(:facturacion).permit(
       :number,
       :name,
+      :precio,
       :solicitud,
       :emicion,
       :entregado,
@@ -433,7 +444,9 @@ class FacturacionsController < ApplicationController
       :facturacion_file
     )
   end
-
+  def precio_params
+    params.require(:facturacion).permit(:precio)
+  end
 
   def download_file(file)
     if file.attached?

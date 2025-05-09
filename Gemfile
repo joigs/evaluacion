@@ -99,5 +99,5 @@ gem 'whenever', require: false
 gem 'ransack'
 
 
-
+gem "dotenv-rails", groups: %i[development test]
 gem 'write_xlsx'

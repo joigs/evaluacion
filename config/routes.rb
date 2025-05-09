@@ -14,10 +14,7 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   namespace :authentication, path: '', as: '' do
     resources :users, path: '/users' do
-      collection do
-        get :new_client
-        post :create_client
-      end
+
       member do
         get :edit_client
         patch :update_client
@@ -37,6 +34,11 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :api do
+    namespace :v1 do
+      resources :facturacions, only: [:index, :show]
+    end
+  end
 
 
 
@@ -59,6 +61,7 @@ Rails.application.routes.draw do
       patch :replace_file
       get :download_solicitud_template
       get :download_cotizacion_template
+      patch :update_price
     end
     collection do
       get :new_bulk_upload
