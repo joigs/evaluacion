@@ -26,6 +26,40 @@
 
 
   <section>
+    <% months_es = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto
+                  Septiembre Octubre Noviembre Diciembre] %>
+    <% if @current_oxy %>
+
+
+        <div class="mx-auto px-6 max-w-2xl text-gray-200">
+
+              <div class="group overflow-hidden p-8 rounded-xl bg-gray-900 shadow-lg border border-gray-700 hover:shadow-xl transition-shadow duration-300 ease-in-out">
+                <div class="text-center">
+                  <h3 class="text-xl font-semibold text-white">Convenio Oxy</h3>
+                  <p class="text-sm text-gray-300 mt-2">Añade conductores</p>
+                  <div class="mt-4">
+                    <%= link_to oxy_path(@current_oxy),
+                                class: "inline-block mb-6 bg-blue-600 hover:bg-blue-700
+                      text-gray-900 font-bold py-2 px-4 rounded
+                      focus:outline-none focus:shadow-outline" do %>
+                      Ver Oxy <%= "#{months_es[@current_oxy.month - 1]} #{@current_oxy.year}" %>
+                    <% end %>
+                  </div>
+                </div>
+              </div>
+        </div>
+
+    <% else %>
+      <div class="mb-6 text-black-800 text-xl">
+        No existe un registro Oxy para <%= "#{months_es[Date.current.month - 1]} #{Date.current.year}" %>.
+      </div>
+      <div data-controller="oxy-alert"
+           data-oxy-alert-message-value="No existe un registro Oxy para <strong><%= "#{months_es[Date.current.month - 1]} #{Date.current.year}" %></strong>."
+           data-oxy-alert-new-url-value="<%= new_oxy_path %>">
+      </div>
+    <% end %>
+
+
 
 
     <div class="py-4"></div>

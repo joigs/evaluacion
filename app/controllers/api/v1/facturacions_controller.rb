@@ -13,7 +13,6 @@ module Api
 
 
 
-
         render json: facturacions.as_json
       end
 

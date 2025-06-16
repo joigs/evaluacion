@@ -1,0 +1,154 @@
+<% months = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre] %>
+<% fecha_base = Date.new(@oxy.year, @oxy.month, 1) %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
+
+
+  <div class="flex items-center justify-start mb-6">
+    <%= link_to "Volver atrás",
+                home_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent \
+                        text-base leading-6 font-medium rounded-md text-blue-400 \
+                        bg-gray-800 hover:bg-blue-800 hover:text-white focus:outline-none \
+                        focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out"
+    %>
+  </div>
+  <div class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200 space-y-6">
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold">Detalle Oxy <%= "#{months[@oxy.month - 1]} #{@oxy.year}" %></h1>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">Mes</h2>
+        <p class="text-xl font-semibold">
+          <%= "#{@oxy.month.to_s.rjust(2,'0')} – #{months[@oxy.month - 1]}" %>
+        </p>
+      </div>
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">Año</h2>
+        <p class="text-xl font-semibold"><%= @oxy.year %></p>
+      </div>
+
+      <%= render "numero_conductores", oxy: @oxy %>
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">
+          Valor por conductor (UF)
+        </h2>
+        <p class="text-xl font-semibold">
+          <%= number_with_precision(@oxy.suma, precision: 2) %>
+        </p>
+      </div>
+
+      <%= render "total_uf", oxy: @oxy %>
+    </div>
+
+
+  </div>
+
+  <div data-controller="calendar" class="mt-8">
+    <div class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200">
+      <h2 class="text-xl font-bold mb-4"><%= "#{months[@oxy.month - 1]} #{@oxy.year}" %></h2>
+
+      <div class="grid grid-cols-7 gap-2 text-center">
+        <% %w[L Ma Mi J V S D].each { |d| %>
+          <div class="text-white-400"><%= d %></div>
+        <% } %>
+        <% today = Date.current %>
+
+        <% days_matrix(fecha_base).each do |week| %>
+          <% week.each do |day| %>
+            <% if day && day.month == fecha_base.month %>
+              <% classes = if day == today
+                             "rounded-md bg-white hover:bg-blue-600 text-gray-900 font-bold py-2"
+                           else
+                             "rounded-md bg-gray-700 hover:bg-blue-600 text-white py-2"
+                           end %>
+              <button
+                data-date="<%= day %>"
+                data-action="click->calendar#open"
+                class="<%= classes %>">
+                <%= day.day %>
+              </button>
+            <% else %>
+              <div></div>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+
+
+    <div data-calendar-target="modal"
+         class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+      <div class="bg-gray-800 p-6 rounded-lg w-full max-w-sm space-y-4 text-center">
+        <h3 class="text-lg font-bold text-white">
+          Registrar día <span data-calendar-target="dayValue"></span>
+        </h3>
+
+        <div class="flex items-center justify-center gap-4">
+          <button data-action="calendar#dec"
+                  class="w-10 h-10 rounded-full bg-red-600 text-white text-xl font-bold">–</button>
+
+          <input type="number" value="1" readonly
+                 data-calendar-target="countDisplay"
+                 class="w-16 text-center bg-gray-700 text-white rounded-md" />
+
+          <button data-action="calendar#inc"
+                  class="w-10 h-10 rounded-full bg-green-600 text-white text-xl font-bold">+</button>
+        </div>
+
+        <%= form_with url: add_records_oxy_path(@oxy),
+                      method: :post,
+                      data: { turbo_stream: true,
+                              action: "turbo:submit-end->calendar#afterSubmit" },
+                      class: "space-y-2" do %>
+          <input type="hidden" name="fecha"    data-calendar-target="hiddenDate">
+          <input type="hidden" name="cantidad" value="1"
+                 data-calendar-target="countHidden">
+
+          <button type="submit"
+                  class="bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded">
+            Confirmar
+          </button>
+        <% end %>
+
+        <button data-action="calendar#close"
+                class="bg-red-600 hover:bg-red-700 text-gray-400 hover:text-white text-sm py-2 px-4 mt-4">Cancelar</button>
+      </div>
+    </div>
+
+
+  </div>
+  <% records = @oxy.oxy_records.order(:fecha) %>
+
+  <div class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200 mt-8">
+    <h2 class="text-xl font-bold mb-4">Registros creados</h2>
+
+    <% if records.any? %>
+      <table class="w-full text-left text-sm">
+        <thead>
+        <tr>
+          <th class="pb-2 border-b border-gray-700 w-14">#</th>
+          <th class="pb-2 border-b border-gray-700">Fecha</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% records.each_with_index do |r, i| %>
+          <tr class="<%= i.even? ? 'bg-gray-800' : 'bg-gray-700' %>">
+            <td class="py-2 px-3 font-mono"><%= i + 1 %></td>
+            <td class="py-2 px-3"><%= format_date(r.fecha) %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="text-gray-400">Aún no se han creado registros para este mes.</p>
+    <% end %>
+  </div>
+
+
+</div>
+

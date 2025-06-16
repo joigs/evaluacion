@@ -11,7 +11,8 @@ class HomeController < ApplicationController
     @facturacions = @facturacions.where.not(number: 0)
 
     @notifications = current_notifications
-
+    @current_oxy = Oxy.find_by(month: Date.current.month,
+                               year:  Date.current.year)
   end
 
 

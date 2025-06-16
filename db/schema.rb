@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_05_07_200931) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_16_210036) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -83,6 +83,25 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_07_200931) do
     t.index ["user_id"], name: "fk_rails_e43b4d7784"
   end
 
+  create_table "oxies", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.integer "month"
+    t.integer "year"
+    t.integer "numero_conductores"
+    t.decimal "suma", precision: 10, scale: 2
+    t.decimal "total_uf", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["year", "month"], name: "index_oxies_on_year_and_month", unique: true
+  end
+
+  create_table "oxy_records", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.date "fecha"
+    t.bigint "oxy_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["oxy_id"], name: "index_oxy_records_on_oxy_id"
+  end
+
   create_table "permisos", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "nombre"
     t.text "descripcion"
@@ -120,6 +139,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_05_07_200931) do
   add_foreign_key "notifications_facturacions", "notifications"
   add_foreign_key "observacions", "facturacions"
   add_foreign_key "observacions", "users"
+  add_foreign_key "oxy_records", "oxies"
   add_foreign_key "user_permisos", "permisos"
   add_foreign_key "user_permisos", "users"
 end
