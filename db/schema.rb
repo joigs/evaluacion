@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_16_210036) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_19_211013) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -91,6 +91,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_16_210036) do
     t.decimal "total_uf", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "arrastre"
     t.index ["year", "month"], name: "index_oxies_on_year_and_month", unique: true
   end
 

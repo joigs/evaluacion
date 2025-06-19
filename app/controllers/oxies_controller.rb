@@ -48,6 +48,7 @@ class OxiesController < ApplicationController
       render :new, status: :unprocessable_entity
     else
       @oxy.total_uf = @oxy.suma * @oxy.numero_conductores.to_f
+      @oxy.arrastre = @oxy.numero_conductores
       @oxy.save
       redirect_to home_path, notice: "Registro creado correctamente"
     end
