@@ -12,8 +12,15 @@ module Api
 
 
 
+        current_oxy = Oxy
+                        .includes(:oxy_records)
+                        .find_by(month: Date.current.month,
+                                 year:  Date.current.year)
 
-        render json: facturacions.as_json
+        render json: {
+          facturacions: facturacions.as_json,
+          current_oxy:  current_oxy.as_json(include: :oxy_records)
+        }
       end
 
 
