@@ -1,0 +1,31 @@
+<!-- app/views/oxies/_records_table.html.erb -->
+<div id="oxy-records"
+     class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200 mt-8">
+
+  <h2 class="text-xl font-bold mb-4">Registros creados</h2>
+
+  <% records = oxy.oxy_records.order(:fecha) %>
+
+  <% if records.any? %>
+    <table class="w-full text-left text-sm">
+      <thead>
+      <tr>
+        <th class="pb-2 border-b border-gray-700 w-14">#</th>
+        <th class="pb-2 border-b border-gray-700">Fecha</th>
+      </tr>
+      </thead>
+      <tbody>
+      <% records.each_with_index do |r, i| %>
+        <tr class="<%= i.even? ? 'bg-gray-800' : 'bg-gray-700' %>">
+          <td class="py-2 px-3 font-mono"><%= i + 1 %></td>
+          <td class="py-2 px-3"><%= format_date(r.fecha) %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-gray-400">
+      Aún no se han creado registros para este mes.
+    </p>
+  <% end %>
+</div>

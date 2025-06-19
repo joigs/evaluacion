@@ -13,3 +13,10 @@
                locals:  { oxy: @oxy } %>
   </template>
 </turbo-stream>
+<turbo-stream action="replace" target="oxy-records">
+  <template>
+    <%= render partial: "records_table",
+               formats: [:html],
+               locals:  { oxy: @oxy } %>
+  </template>
+</turbo-stream>
