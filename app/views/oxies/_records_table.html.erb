@@ -1,19 +1,20 @@
 <div id="oxy-records"
      data-controller="oxy-records"
      class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200 mt-8">
+  <% records = oxy.oxy_records.order(:fecha) %>
 
   <div class="flex items-center justify-between mb-4">
     <h2 class="text-xl font-bold">Registros creados</h2>
-
+    <% if records %>
     <button type="button"
             data-oxy-records-target="selectBtn"
             data-action="oxy-records#selectMode"
             class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">
       Eliminar registros
     </button>
+    <% end %>
   </div>
 
-  <% records = oxy.oxy_records.order(:fecha) %>
 
   <% if records.any? %>
     <%= form_with url: destroy_records_oxy_path(oxy),
