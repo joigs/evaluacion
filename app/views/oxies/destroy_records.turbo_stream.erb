@@ -1,0 +1,23 @@
+<turbo-stream action="replace" target="oxy-num-conductores">
+  <template>
+    <%= render partial: "numero_conductores",
+               formats: [:html],
+               locals:  { oxy: @oxy } %>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="oxy-total-uf">
+  <template>
+    <%= render partial: "total_uf",
+               formats: [:html],
+               locals:  { oxy: @oxy } %>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="oxy-records">
+  <template>
+    <%= render partial: "records_table",
+               formats: [:html],
+               locals:  { oxy: @oxy } %>
+  </template>
+</turbo-stream>

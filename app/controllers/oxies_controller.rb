@@ -81,6 +81,29 @@ class OxiesController < ApplicationController
     render :show, status: :unprocessable_entity
   end
 
+
+
+  def destroy_records
+    @oxy = Oxy.find(params[:id])
+    ids  = params[:ids] || []
+
+    ActiveRecord::Base.transaction do
+      deleted = @oxy.oxy_records.where(id: ids).delete_all
+      @oxy.decrement!(:numero_conductores, deleted)
+      @oxy.decrement!(:total_uf,           @oxy.suma * deleted)
+    end
+
+    @oxy.reload
+    @oxy.oxy_records.reload
+
+    respond_to do |format|
+      format.turbo_stream
+      format.html { redirect_to @oxy, notice: "#{deleted} registros eliminados" }
+    end
+  end
+
+
+
   private
 
   def oxy
