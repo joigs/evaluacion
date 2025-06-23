@@ -23,6 +23,25 @@
       <p class="text-red-400 text-sm mt-1"><%= facturacion.errors[:name].first %></p>
     <% end %>
   </div>
+  <div class="<%= 'border border-red-500 rounded-md' if facturacion.errors[:empresa].any? %>">
+    <%= form.label :empresa, "Empresa", class: "block text-gray-300" %>
+
+    <%= form.text_field :empresa,
+                        list: "empresa_options",
+                        class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white border \
+                                border-gray-600 rounded-md shadow-sm focus:outline-none \
+                                focus:ring-blue-500 focus:border-blue-500 sm:text-sm" %>
+
+    <% if facturacion.errors[:empresa].any? %>
+      <p class="text-red-400 text-sm mt-1"><%= facturacion.errors[:empresa].first %></p>
+    <% end %>
+  </div>
+
+  <datalist id="empresa_options">
+    <% Facturacion.distinct.order(:empresa).pluck(:empresa).compact.each do |e| %>
+      <option value="<%= e %>"></option>
+    <% end %>
+  </datalist>
 
   <% if facturacion.new_record? %>
     <div class="<%= 'border border-red-500 rounded-md' if facturacion.errors[:solicitud_file].any? %>">

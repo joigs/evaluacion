@@ -434,6 +434,7 @@ class FacturacionsController < ApplicationController
       :emicion,
       :entregado,
       :resultado,
+      :empresa,
       :fecha_inspeccion,
       :oc,
       :factura,
