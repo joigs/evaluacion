@@ -8,14 +8,20 @@ module Api
 
       # GET /api/v1/facturacions
       def index
-        facturacions = Facturacion.where.not(oc: nil).distinct
 
+        year  = params[:year].present?  ? params[:year].to_i  : Date.current.year
+        month = params[:month].present? ? params[:month].to_i : Date.current.month
+        start_date = Date.new(year, month, 1)
+        end_date   = start_date.end_of_month
 
-
+        facturacions =
+          Facturacion
+            .where.not(oc: nil)
+            .where(fecha_inspeccion: start_date..end_date)
+            .distinct
         current_oxy = Oxy
                         .includes(:oxy_records)
-                        .find_by(month: Date.current.month,
-                                 year:  Date.current.year)
+                        .find_by(month: month, year: year)
 
         render json: {
           facturacions: facturacions.as_json,
@@ -24,12 +30,6 @@ module Api
       end
 
 
-      # GET /api/v1/facturacions/:id
-      def show
-        @facturacion = Facturacion.find(params[:id])
-
-        render json: @facturacion.as_json
-      end
 
       private
 
