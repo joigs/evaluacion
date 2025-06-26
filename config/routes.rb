@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-
+  scope path: 'evaluacion' do
 
 
   get "/service-worker.js" => "service_worker#service_worker"
@@ -89,3 +89,4 @@ Rails.application.routes.draw do
   # Defines the root path route ("/")
   # root "posts#index"
 end
+  end
