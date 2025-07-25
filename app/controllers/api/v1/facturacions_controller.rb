@@ -23,10 +23,18 @@ module Api
                         .includes(:oxy_records)
                         .find_by(month: month, year: year)
 
+        current_ald = Ald
+                        .find_by(month: month, year: year)
+
+        otros = Otro
+                  .includes(:empresa)
+                  .where(month: month, year: year)
+
         render json: {
           facturacions: facturacions.as_json,
-          current_oxy:  current_oxy.as_json(include: :oxy_records)
-        }
+          current_oxy:  current_oxy.as_json(include: :oxy_records),
+          current_ald:  current_ald&.as_json(include: :empresa),
+          otros:        otros.as_json(include: { empresa: { only: [:nombre] } })        }
       end
 
 
