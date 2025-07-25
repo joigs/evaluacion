@@ -33,7 +33,7 @@ module Api
         render json: {
           facturacions: facturacions.as_json,
           current_oxy:  current_oxy.as_json(include: :oxy_records),
-          current_ald:  current_ald&.as_json(include: :empresa),
+          current_ald:  current_ald&.as_json,
           otros:        otros.as_json(include: { empresa: { only: [:nombre] } })        }
       end
 
