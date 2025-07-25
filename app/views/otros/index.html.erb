@@ -2,8 +2,10 @@
 
 <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 my-8 text-gray-200">
 
-  <div class="bg-gray-900 p-4 rounded-lg shadow-md mb-6">
-    <%= form_with url: otros_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end" do %>
+  <!-- Filtros + Botones -->
+  <div class="bg-gray-900 p-4 rounded-lg shadow-md mb-6 flex flex-wrap gap-4 items-end">
+    <%= form_with url: otros_path, method: :get, local: true, class: "flex flex-wrap gap-4 items-end grow" do %>
+      <!-- Mes -->
       <div>
         <label class="block text-gray-400 mb-1">Mes</label>
         <%= select_tag :month,
@@ -14,6 +16,7 @@
                        class: "px-3 py-2 bg-gray-700 text-white rounded-md" %>
       </div>
 
+      <!-- Año -->
       <div>
         <label class="block text-gray-400 mb-1">Año</label>
         <%= select_tag :year,
@@ -21,13 +24,26 @@
                        class: "px-3 py-2 bg-gray-700 text-white rounded-md" %>
       </div>
 
+      <!-- Aplicar filtro -->
       <div>
         <%= submit_tag "Filtrar",
                        class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md" %>
       </div>
     <% end %>
+
+    <!-- Botones de acción -->
+    <div class="flex gap-3 ml-auto">
+      <%= link_to "Nuevo registro",
+                  new_otro_path(month: @selected_month, year: @selected_year),
+                  class: "px-4 py-2 bg-green-600 hover:bg-green-700 text-gray-900 font-bold rounded-md" %>
+
+      <%= link_to "Inicio",
+                  home_path,
+                  class: "px-4 py-2 bg-gray-700 hover:bg-gray-800 text-blue-400 hover:text-white font-bold rounded-md" %>
+    </div>
   </div>
 
+  <!-- Lista -->
   <div class="bg-gray-900 p-4 rounded-lg shadow-md">
     <h2 class="text-xl font-bold mb-4">
       Registros Otros – <%= "#{months_es[@selected_month - 1]} #{@selected_year}" %>
