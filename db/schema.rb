@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_06_23_074315) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_25_184345) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -39,6 +39,22 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_23_074315) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "alds", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.integer "month"
+    t.integer "year"
+    t.decimal "n1", precision: 10
+    t.decimal "n2", precision: 10
+    t.decimal "total", precision: 12, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "empresas", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "nombre"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "facturacions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.integer "number"
     t.string "name"
@@ -54,6 +70,14 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_23_074315) do
     t.datetime "updated_at", null: false
     t.float "pesos"
     t.string "empresa"
+  end
+
+  create_table "ivas", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.integer "year", null: false
+    t.integer "month", null: false
+    t.decimal "valor", precision: 15, scale: 4, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "notifications", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -82,6 +106,18 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_23_074315) do
     t.datetime "updated_at", null: false
     t.index ["facturacion_id"], name: "fk_rails_e911727f32"
     t.index ["user_id"], name: "fk_rails_e43b4d7784"
+  end
+
+  create_table "otros", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.integer "month"
+    t.integer "year"
+    t.decimal "n1", precision: 10
+    t.decimal "n2", precision: 10
+    t.decimal "total", precision: 12, scale: 2
+    t.bigint "empresa_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["empresa_id"], name: "index_otros_on_empresa_id"
   end
 
   create_table "oxies", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -141,6 +177,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_06_23_074315) do
   add_foreign_key "notifications_facturacions", "notifications"
   add_foreign_key "observacions", "facturacions"
   add_foreign_key "observacions", "users"
+  add_foreign_key "otros", "empresas"
   add_foreign_key "oxy_records", "oxies"
   add_foreign_key "user_permisos", "permisos"
   add_foreign_key "user_permisos", "users"

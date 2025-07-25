@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  month: 1
+  year: 1
+  n1: 9.99
+  n2: 9.99
+  total: 9.99
+  empresa: one
+
+two:
+  month: 1
+  year: 1
+  n1: 9.99
+  n2: 9.99
+  total: 9.99
+  empresa: two

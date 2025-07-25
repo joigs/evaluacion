@@ -1,0 +1,72 @@
+<% months = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre] %>
+
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
+
+  <div class="flex items-center justify-start mb-6">
+    <%= link_to "Volver atrás",
+                home_path,
+                class: "inline-flex items-center px-4 py-2 border border-transparent \
+                        text-base leading-6 font-medium rounded-md text-blue-400 \
+                        bg-gray-800 hover:bg-blue-800 hover:text-white focus:outline-none \
+                        focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out" %>
+  </div>
+
+  <div class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200 space-y-6">
+
+    <h1 class="text-2xl font-bold">
+      Detalle ALD <%= "#{months[@ald.month - 1]} #{@ald.year}" %>
+    </h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">Mes</h2>
+        <p class="text-xl font-semibold">
+          <%= "#{@ald.month.to_s.rjust(2,'0')} – #{months[@ald.month - 1]}" %>
+        </p>
+      </div>
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">Año</h2>
+        <p class="text-xl font-semibold"><%= @ald.year %></p>
+      </div>
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">
+          Número de trámites
+        </h2>
+        <p class="text-xl font-semibold"><%= @ald.n1 %></p>
+      </div>
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">Valor comisión (UF)</h2>
+        <p class="text-xl font-semibold">
+          <%= number_with_precision(@v1_uf, precision: 2) %>
+          <% if @v1_clp %>
+            <span class="block text-sm text-gray-400">
+              ≈ <%= number_to_currency(@v1_clp, unit: "$", precision: 0, delimiter: ".") %> CLP
+            </span>
+          <% end %>
+        </p>
+      </div>
+
+      <!-- Total -->
+      <div class="bg-gray-800 rounded-md p-4 sm:col-span-2">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">Total (UF)</h2>
+        <p class="text-2xl font-bold">
+          <%= number_with_precision(@ald.total, precision: 2) %>
+          <% if @total_clp %>
+            <span class="block text-lg text-gray-400 font-normal">
+              ≈ <%= number_to_currency(@total_clp, unit: "$", precision: 0, delimiter: ".") %> CLP
+            </span>
+          <% else %>
+            <span class="block text-sm text-red-400 font-normal">
+              UF no disponible para este período
+            </span>
+          <% end %>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>

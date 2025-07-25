@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
-  scope path: 'evaluacion' do
 
+  scope path: 'evaluacion' do
+    resources :otros
+    resources :alds
 
   get "/service-worker.js" => "service_worker#service_worker"
   get "/manifest.json" => "service_worker#manifest"

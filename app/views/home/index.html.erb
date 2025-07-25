@@ -29,49 +29,110 @@
   <% end %>
 </div>
 
+<section>
+  <% months_es = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre] %>
+  <% hoy          = Date.current %>
+  <% missing_date = @ald_missing_date || hoy %>
 
+  <div class="px-6 mx-auto max-w-7xl text-gray-200">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-
-
-  <section>
-    <% months_es = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto
-                  Septiembre Octubre Noviembre Diciembre] %>
-    <% if @current_oxy %>
-
-
-        <div class="mx-auto px-6 max-w-2xl text-gray-200">
-
-              <div class="group overflow-hidden p-8 rounded-xl bg-gray-900 shadow-lg border border-gray-700 hover:shadow-xl transition-shadow duration-300 ease-in-out">
-                <div class="text-center">
-                  <h3 class="text-xl font-semibold text-white">Convenio Oxy</h3>
-                  <p class="text-sm text-gray-300 mt-2">Añade conductores</p>
-                  <div class="mt-4">
-                    <%= link_to oxy_path(@current_oxy),
-                                class: "inline-block mb-6 bg-blue-600 hover:bg-blue-700
-                      text-gray-900 font-bold py-2 px-4 rounded
-                      focus:outline-none focus:shadow-outline" do %>
-                      Ver Oxy <%= "#{months_es[@current_oxy.month - 1]} #{@current_oxy.year}" %>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
+      <!-- OXY -->
+      <div class="group overflow-hidden p-8 rounded-xl bg-gray-900 shadow-lg border border-gray-700 hover:shadow-xl transition-shadow duration-300 ease-in-out">
+        <div class="text-center">
+          <h3 class="text-xl font-semibold text-white">Convenio Oxy</h3>
+          <p class="text-sm text-gray-300 mt-2">Añade conductores</p>
+          <div class="mt-4">
+            <% if @current_oxy %>
+              <%= link_to oxy_path(@current_oxy),
+                          class: "inline-block mb-6 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" do %>
+                Ver Oxy <%= "#{months_es[@current_oxy.month - 1]} #{@current_oxy.year}" %>
+              <% end %>
+            <% else %>
+              <p class="text-sm text-gray-400 mb-4">
+                No existe un registro Oxy para <%= "#{months_es[hoy.month - 1]} #{hoy.year}" %>.
+              </p>
+              <%= link_to "Crear ahora", new_oxy_path,
+                          class: "inline-block bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+            <% end %>
+          </div>
         </div>
-
-    <% else %>
-      <div class="mb-6 text-black-800 text-xl">
-        No existe un registro Oxy para <%= "#{months_es[Date.current.month - 1]} #{Date.current.year}" %>.
       </div>
-      <div data-controller="oxy-alert"
-           data-oxy-alert-message-value="No existe un registro Oxy para <strong><%= "#{months_es[Date.current.month - 1]} #{Date.current.year}" %></strong>."
-           data-oxy-alert-new-url-value="<%= new_oxy_path %>">
+
+      <!-- ALD -->
+      <div class="group overflow-hidden p-8 rounded-xl bg-gray-900 shadow-lg border border-gray-700 hover:shadow-xl transition-shadow duration-300 ease-in-out">
+        <div class="text-center">
+          <h3 class="text-xl font-semibold text-white">ALD</h3>
+          <p class="text-sm text-gray-300 mt-2">Resumen mensual</p>
+
+          <div class="mt-4">
+            <% if @current_ald %>
+              <!-- Mes actual existe -->
+              <%= link_to ald_path(@current_ald),
+                          class: "inline-block mb-6 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" do %>
+                Ver ALD <%= "#{months_es[@current_ald.month - 1]} #{@current_ald.year}" %>
+              <% end %>
+
+            <% elsif !@last_day_of_month && @last_ald_record.present? %>
+              <!-- Falta mes actual, pero aún no es último día: mostrar último ALD disponible -->
+              <p class="text-sm text-gray-400 mb-4">
+                No existe un ALD para <%= "#{months_es[Date.current.month - 1]} #{Date.current.year}" %>.
+              </p>
+              <%= link_to ald_path(@last_ald_record),
+                          class: "inline-block mb-6 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" do %>
+                Ver último ALD (<%= "#{months_es[@last_ald_record.month - 1]} #{@last_ald_record.year}" %>)
+              <% end %>
+
+            <% else %>
+              <!-- Último día (o nunca se ha creado ningún ALD) -->
+              <p class="text-sm text-gray-400 mb-4">
+                No existe un ALD para <%= "#{months_es[missing_date.month - 1]} #{missing_date.year}" %>.
+              </p>
+              <%= link_to "Crear ahora",
+                          new_ald_path(month: missing_date.month, year: missing_date.year),
+                          class: "inline-block bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+            <% end %>
+          </div>
+        </div>
       </div>
-    <% end %>
 
 
+      <!-- OTROS -->
+      <div class="group overflow-hidden p-8 rounded-xl bg-gray-900 shadow-lg border border-gray-700 hover:shadow-xl transition-shadow duration-300 ease-in-out">
+        <div class="text-center">
+          <h3 class="text-xl font-semibold text-white">Otros</h3>
+          <p class="text-sm text-gray-300 mt-2">Registros varios</p>
+          <div class="mt-4">
+            <%= link_to otros_path,
+                        class: "inline-block mb-6 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" do %>
+              Ver índice de Otros
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Alertas FUERA del grid -->
+  <% unless @current_oxy %>
+    <div class="hidden"
+         data-controller="oxy-alert"
+         data-oxy-alert-message-value="No existe un registro Oxy para <strong><%= "#{months_es[hoy.month - 1]} #{hoy.year}" %></strong>."
+         data-oxy-alert-new-url-value="<%= new_oxy_path %>"></div>
+  <% end %>
+
+  <% if @show_ald_alert && @ald_missing_date %>
+    <div class="hidden"
+         data-controller="record-alert"
+         data-record-alert-title-value="Sin ALD"
+         data-record-alert-message-value="No existe un ALD para <strong><%= "#{months_es[missing_date.month - 1]} #{missing_date.year}" %></strong>."
+         data-record-alert-new-url-value="<%= new_ald_path(month: missing_date.month, year: missing_date.year) %>"></div>
+  <% end %>
 
 
-    <div class="py-4"></div>
+  <div class="py-4"></div>
 
-    <%= render template: "facturacions/index" %>
+  <%= render template: "facturacions/index" %>
+</section>
 
-  </section>
