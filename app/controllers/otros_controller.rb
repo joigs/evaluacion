@@ -29,8 +29,8 @@ class OtrosController < ApplicationController
 
     iva = Iva.find_by(year: @otro.year, month: @otro.month)
 
-    @v1_uf       = Otro::V1
-    @v1_clp      = iva ? (@v1_uf   * iva.valor).round(0) : nil
+    @v1_uf     = @otro.v1
+    @v1_clp    = iva ? (@otro.v1 * iva.valor).round(0) : nil
     @total_clp   = iva ? (@otro.total * iva.valor).round(0) : nil
     @iva_missing = iva.nil?
 
@@ -90,7 +90,7 @@ class OtrosController < ApplicationController
   end
 
   def otro_params
-    params.require(:otro).permit(:month, :year, :n1, :t_pesos)
+    params.require(:otro).permit(:month, :year, :n1, :t_pesos, :v1)
   end
 
   def authorize_user
