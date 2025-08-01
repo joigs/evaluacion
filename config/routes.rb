@@ -64,6 +64,8 @@ Rails.application.routes.draw do
       get :download_solicitud_template
       get :download_cotizacion_template
       patch :update_price
+      patch :update_paso_actual
+
     end
     collection do
       get :new_bulk_upload

@@ -1,9 +1,9 @@
 class FacturacionsController < ApplicationController
   before_action :set_facturacion, only: [
-    :show, :edit, :update,
-    :download_solicitud_file, :download_cotizacion_doc_file,
-    :download_cotizacion_pdf_file, :download_orden_compra_file,
-    :download_facturacion_file, :download_all_files
+    :show, :edit, :update, :download_solicitud_file, :download_cotizacion_doc_file,
+    :download_cotizacion_pdf_file, :download_orden_compra_file, :download_facturacion_file,
+    :download_all_files, :update_paso_actual, :upload_cotizacion, :upload_orden_compra,
+    :update_fecha_inspeccion, :upload_factura, :manage_files, :replace_file, :update_price
   ]
 
   before_action :authorize_user
@@ -51,7 +51,7 @@ class FacturacionsController < ApplicationController
 
   def create
     @facturacion = Facturacion.new(facturacion_params)
-
+    @facturacion.paso_actual = 1
     if @facturacion.save
       notification = Notification.find_by(notification_type: :solicitud_pendiente)
       notification.facturacions << @facturacion if notification
@@ -78,7 +78,17 @@ class FacturacionsController < ApplicationController
 
 
 
+  def update_paso_actual
+    @facturacion = Facturacion.find(params[:id])
+    paso = params[:paso_actual].to_i
 
+    if paso >= 0 && paso < Facturacion::STEPS.length
+      @facturacion.update(paso_actual: paso)
+      render json: { success: true }
+    else
+      render json: { success: false, error: "Paso inválido" }, status: :unprocessable_entity
+    end
+  end
 
   def download_solicitud_file
     download_file(@facturacion.solicitud_file)
@@ -132,143 +142,48 @@ class FacturacionsController < ApplicationController
   end
 
   def upload_cotizacion
-    @facturacion = Facturacion.find(params[:id])
-
-    unless params[:facturacion]
-      flash.now[:alert] = "Ambos archivos (DOCX y PDF) son obligatorios."
-      render :show, status: :unprocessable_entity
-      return
+    if params[:facturacion].present?
+      docx = params[:facturacion][:cotizacion_doc_file]
+      pdf  = params[:facturacion][:cotizacion_pdf_file]
+      @facturacion.cotizacion_doc_file.attach(docx) if docx.present?
+      @facturacion.cotizacion_pdf_file.attach(pdf)  if pdf.present?
+      @facturacion.update(emicion: Date.current) if docx.present? || pdf.present?
     end
-
-    if params[:facturacion][:cotizacion_doc_file].present? && params[:facturacion][:cotizacion_pdf_file].present?
-      @facturacion.cotizacion_doc_file.attach(params[:facturacion][:cotizacion_doc_file])
-      @facturacion.cotizacion_pdf_file.attach(params[:facturacion][:cotizacion_pdf_file])
-
-      if valid_file_type?(@facturacion.cotizacion_doc_file, %w[application/msword application/vnd.openxmlformats-officedocument.wordprocessingml.document]) &&
-        valid_file_type?(@facturacion.cotizacion_pdf_file, %w[application/pdf])
-
-
-
-        @facturacion.update(emicion: Date.current)
-
-        notification = Notification.find_by(notification_type: :solicitud_pendiente)
-        notification.facturacions.delete(@facturacion) if notification
-
-        next_notification = Notification.find_by(notification_type: :entrega_pendiente)
-        next_notification.facturacions << @facturacion if next_notification
-
-        redirect_to @facturacion, notice: "Documentos subidos correctamente y fecha de emisión actualizada."
-      else
-        flash.now[:alert] = "Ambos archivos deben ser del tipo correcto (DOCX y PDF)."
-        @facturacion.cotizacion_doc_file.purge
-        @facturacion.cotizacion_pdf_file.purge
-        render :show, status: :unprocessable_entity
-      end
-    else
-      flash.now[:alert] = "Ambos archivos (DOCX y PDF) son obligatorios."
-      render :show, status: :unprocessable_entity
-    end
+    @facturacion.update(paso_actual: @facturacion.paso_actual+1)
+    redirect_to @facturacion, notice: "Documentos de cotización subidos (si corresponde)."
   end
 
-
-
   def upload_orden_compra
-    @facturacion = Facturacion.find(params[:id])
-
-    unless params[:facturacion].present?
-      flash.now[:alert] = "No se proporcionaron datos para procesar la Orden de Compra."
-      render :show, status: :unprocessable_entity
-      return
+    if params[:facturacion].present?
+      resultado = params[:facturacion][:resultado]
+      orden_compra_file = params[:facturacion][:orden_compra_file]
+      @facturacion.resultado = resultado if resultado.present?
+      @facturacion.orden_compra_file.attach(orden_compra_file) if orden_compra_file.present?
+      @facturacion.oc = Date.current if orden_compra_file.present?
+      @facturacion.save
     end
-
-    resultado = params[:facturacion][:resultado]&.to_i
-    orden_compra_file = params[:facturacion][:orden_compra_file]
-
-    unless resultado.present? && Facturacion.resultados.values.include?(resultado)
-      flash.now[:alert] = "Debes seleccionar un resultado válido (Aceptado o Rechazado)."
-      render :show, status: :unprocessable_entity
-      return
-    end
-
-    allowed_types = ["application/pdf", "image/png", "image/jpeg", "image/jpg"]
-    if orden_compra_file.present? && !valid_uploaded_file?(orden_compra_file, allowed_types)
-      flash.now[:alert] = "Tipo de archivo invalido"
-      render :show, status: :unprocessable_entity
-      return
-    end
-
-    @facturacion.resultado = resultado
-    @facturacion.oc = Date.current if resultado == 2
-    @facturacion.orden_compra_file.attach(orden_compra_file) if orden_compra_file.present? && resultado == 2
-
-    if @facturacion.save
-
-      if @facturacion.resultado == "Aceptado"
-        next_notification = Notification.find_by(notification_type: :factura_pendiente)
-        next_notification.facturacions << @facturacion if next_notification
-      end
-
-      redirect_to @facturacion, notice: "Orden de Compra procesada correctamente."
-    else
-      flash.now[:alert] = "No se pudo procesar la Orden de Compra."
-      render :show, status: :unprocessable_entity
-    end
+    @facturacion.update(paso_actual: @facturacion.paso_actual+1)
+    redirect_to @facturacion, notice: "Orden de compra actualizada (si corresponde)."
   end
 
   def update_fecha_inspeccion
-    @facturacion = Facturacion.find(params[:id])
-
-    if @facturacion.update(facturacion_params)
-      redirect_to @facturacion, notice: "Fecha de evaluación actualizada con éxito."
-    else
-      flash.now[:alert] = "No se pudo actualizar la fecha de evaluación."
-      render :show, status: :unprocessable_entity
-    end
+    @facturacion.update(facturacion_params)
+    @facturacion.update(paso_actual: @facturacion.paso_actual+1)
+    redirect_to @facturacion, notice: "Fecha de evaluación actualizada."
   end
-
 
 
   def upload_factura
-    @facturacion = Facturacion.find(params[:id])
-
-    unless params[:facturacion]
-      flash.now[:alert] = "El archivo PDF y la fecha de inspección son obligatorios."
-      render :show, status: :unprocessable_entity
-      return
+    if params[:facturacion].present?
+      facturacion_file = params[:facturacion][:facturacion_file]
+      @facturacion.facturacion_file.attach(facturacion_file) if facturacion_file.present?
+      @facturacion.factura = Date.current if facturacion_file.present?
+      @facturacion.save
     end
-
-    facturacion_file = params[:facturacion][:facturacion_file]
-
-    if facturacion_file.blank?
-      flash.now[:alert] = "El archivo PDF es obligatorio."
-      render :show, status: :unprocessable_entity
-      return
-    end
-
-
-
-    @facturacion.facturacion_file.attach(facturacion_file)
-    unless valid_file_type?(@facturacion.facturacion_file, %w[application/pdf])
-      flash.now[:alert] = "El archivo debe ser un PDF."
-      @facturacion.facturacion_file.purge
-      render :show, status: :unprocessable_entity
-      return
-    end
-
-    @facturacion.factura = Date.current
-
-    if @facturacion.save
-
-      notification = Notification.find_by(notification_type: :factura_pendiente)
-      notification.facturacions.delete(@facturacion) if notification
-
-
-      redirect_to @facturacion, notice: "Factura subida correctamente."
-    else
-      flash.now[:alert] = "No se pudo procesar la solicitud."
-      render :show, status: :unprocessable_entity
-    end
+    @facturacion.update(paso_actual: @facturacion.paso_actual+1)
+    redirect_to @facturacion, notice: "Factura subida (si corresponde)."
   end
+
 
   def manage_files
     @facturacion = Facturacion.find(params[:id])

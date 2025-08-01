@@ -13,11 +13,8 @@ class Facturacion < ApplicationRecord
 
   validates :number, presence: true
   validates :name, presence: true
-  validates :solicitud_file, presence: true
 
-  validates :cotizacion_pdf_file, presence: true, if: -> { emicion.present? }
 
-  validates :fecha_inspeccion, presence: true, if: -> { factura.present? }
 
 
   after_initialize do
@@ -26,6 +23,20 @@ class Facturacion < ApplicationRecord
 
 
   validate :valid_file_types
+
+
+  STEPS = [
+    "Solicitud",
+    "Emisión de Cotización",
+    "Entrega a Cliente",
+    "Orden de Compra",
+    "Fecha Evaluación",
+    "Factura"
+  ].freeze
+
+  def current_step_name
+    STEPS[paso_actual || 0]
+  end
 
   private
 
@@ -42,5 +53,7 @@ class Facturacion < ApplicationRecord
       errors.add(file.name.to_sym, "debe ser un archivo #{type_name}")
     end
   end
+
+
 
 end
