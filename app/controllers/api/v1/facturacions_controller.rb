@@ -23,6 +23,10 @@ module Api
                         .includes(:oxy_records)
                         .find_by(month: month, year: year)
 
+        current_cmpc = Cmpc
+                         .includes(:cmpc_records)
+                        .find_by(month: month, year: year)
+
         current_ald = Ald
                         .find_by(month: month, year: year)
 
@@ -33,6 +37,7 @@ module Api
         render json: {
           facturacions: facturacions.as_json,
           current_oxy:  current_oxy.as_json(include: :oxy_records),
+          current_cmpc: current_cmpc.as_json(include: :cmpc_records),
           current_ald:  current_ald&.as_json,
           otros:        otros.as_json(include: { empresa: { only: [:nombre] } })        }
       end
