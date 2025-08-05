@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  month: 1
+  year: 1
+  numero_servicios: 1
+  total_uf: 9.99
+
+two:
+  month: 1
+  year: 1
+  numero_servicios: 1
+  total_uf: 9.99

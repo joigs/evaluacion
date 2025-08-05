@@ -1,0 +1,68 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8 bg-gray-900 p-6 rounded-lg shadow-md"
+     data-controller="cmpc-lock">
+  <%= form_with(model: @cmpc, builder: CustomFormBuilder, local: true, class: "space-y-4") do |form| %>
+    <% if @cmpc.errors.any? %>
+      <% error_messages = @cmpc.errors.full_messages.map { |msg| "<li>#{j msg}</li>" }.join %>
+      <%= javascript_tag do %>
+        Swal.fire({
+        icon: 'error',
+        title: 'Error: no se pudo guardar el registro',
+        html: '<ul style="text-align: left;">' + '<%= raw error_messages %>' + '</ul>',
+        confirmButtonText: 'Entendido'
+        })
+      <% end %>
+    <% end %>
+
+    <div class="flex gap-4 mb-4">
+      <button type="button"
+              data-action="cmpc-lock#unlock"
+              data-cmpc-lock-target="unlockButton"
+              class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Desbloquear campos
+      </button>
+
+      <button type="button"
+              data-action="cmpc-lock#lock"
+              data-cmpc-lock-target="lockButton"
+              class="hidden bg-indigo-500 hover:bg-indigo-600 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+        Bloquear campos
+      </button>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :month, "Mes", class: "block text-gray-300" %>
+
+      <% months = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre] %>
+
+      <%= form.select :month,
+                      options_for_select(months.each_with_index.map { |n,i| ["#{(i+1).to_s.rjust(2,'0')} – #{n}", i+1] },
+                                         @cmpc.month),
+                      {},
+                      disabled: true,
+                      required: true,
+                      data: { "cmpc-lock-target": "field", action: "cmpc-lock#syncMonth" },
+                      class: "mt-1 block w-full bg-gray-800 opacity-70
+                text-white rounded-md cursor-not-allowed" %>
+
+      <%= form.hidden_field :month,
+                            value: @cmpc.month,
+                            data: { "cmpc-lock-target": "hiddenMonth" } %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :year, "Año", class: "block text-gray-300" %>
+      <%= form.number_field :year,
+                            min: 2000,
+                            max: 2100,
+                            readonly: true,
+                            required: true,
+                            data: { "cmpc-lock-target": "field" },
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-800 opacity-70 text-white rounded-md cursor-not-allowed" %>
+    </div>
+
+
+    <div>
+      <%= form.submit "Guardar datos", class: "w-full bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" %>
+    </div>
+  <% end %>
+</div>

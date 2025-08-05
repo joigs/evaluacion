@@ -1,9 +1,15 @@
 Rails.application.routes.draw do
 
+
   scope path: 'evaluacion' do
     resources :otros
     resources :alds
-
+    resources :cmpcs do
+      member do
+        post :add_records
+        delete :destroy_records
+      end
+    end
   get "/service-worker.js" => "service_worker#service_worker"
   get "/manifest.json" => "service_worker#manifest"
 

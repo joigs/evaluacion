@@ -1,0 +1,61 @@
+<div id="cmpc-records"
+     data-controller="cmpc-records"
+     class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200 mt-8">
+  <% records = cmpc.cmpc_records.order(:fecha) %>
+
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl font-bold">Registros creados</h2>
+    <% if records %>
+      <button type="button"
+              data-cmpc-records-target="selectBtn"
+              data-action="cmpc-records#selectMode"
+              class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded">
+        Eliminar registros
+      </button>
+    <% end %>
+  </div>
+
+
+  <% if records.any? %>
+    <%= form_with url: destroy_records_cmpc_path(cmpc),
+                  method: :delete,
+                  data:  { turbo_stream: true },
+                  html:  { data: { "cmpc-records-target": "form" } } do %>
+
+      <button type="button"
+              data-cmpc-records-target="deleteBtn"
+              data-action="cmpc-records#confirmDelete"
+              class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 ml-4 mb-6 rounded">
+        Eliminar seleccionados
+      </button>
+
+      <table class="w-full text-left text-sm">
+        <thead>
+        <tr>
+          <th class="pb-2 border-b border-gray-700 w-8"></th>
+          <th class="pb-2 border-b border-gray-700 w-14">#</th>
+          <th class="pb-2 border-b border-gray-700">Fecha</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% records.each_with_index do |r, i| %>
+          <tr class="<%= i.even? ? 'bg-gray-800' : 'bg-gray-700' %>">
+            <td class="py-2 px-2">
+              <input type="checkbox" name="ids[]" value="<%= r.id %>"
+                     data-cmpc-records-target="checkbox"
+                     data-action="cmpc-records#toggleSelection"
+                     class="hidden cursor-pointer" />
+            </td>
+            <td class="py-2 px-3 font-mono"><%= i + 1 %></td>
+            <td class="py-2 px-3" data-date-cell><%= format_date(r.fecha) %></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+
+
+    <% end %>
+  <% else %>
+    <p class="text-gray-400">Aún no se han creado registros para este mes.</p>
+  <% end %>
+</div>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_01_072453) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_05_191158) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -45,6 +45,25 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_01_072453) do
     t.decimal "n1", precision: 10
     t.decimal "n2", precision: 10
     t.decimal "total", precision: 12, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "cmpc_records", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.date "fecha"
+    t.decimal "suma", precision: 10, scale: 2
+    t.integer "numero"
+    t.bigint "cmpc_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cmpc_id"], name: "index_cmpc_records_on_cmpc_id"
+  end
+
+  create_table "cmpcs", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.integer "month"
+    t.integer "year"
+    t.integer "numero_servicios"
+    t.decimal "total_uf", precision: 10, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -175,6 +194,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_01_072453) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "cmpc_records", "cmpcs"
   add_foreign_key "notifications_facturacions", "facturacions"
   add_foreign_key "notifications_facturacions", "notifications"
   add_foreign_key "observacions", "facturacions"

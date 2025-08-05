@@ -1,0 +1,22 @@
+<turbo-stream action="replace" target="cmpc-num-conductores">
+  <template>
+    <%= render partial: "numero_servicios",
+               formats: [:html],
+               locals:  { cmpc: @cmpc } %>
+  </template>
+</turbo-stream>
+
+<turbo-stream action="replace" target="cmpc-total-uf">
+  <template>
+    <%= render partial: "total_uf",
+               formats: [:html],
+               locals:  { cmpc: @cmpc } %>
+  </template>
+</turbo-stream>
+<turbo-stream action="replace" target="cmpc-records">
+  <template>
+    <%= render partial: "records_table",
+               formats: [:html],
+               locals:  { cmpc: @cmpc } %>
+  </template>
+</turbo-stream>

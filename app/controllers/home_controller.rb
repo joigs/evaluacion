@@ -9,6 +9,7 @@ class HomeController < ApplicationController
     prev  = today.prev_month
 
     @current_oxy = Oxy.find_by(month: today.month,  year: today.year)
+    @current_cmpc = Cmpc.find_by(month: today.month,  year: today.year)
 
     @current_ald = Ald.find_by(month: today.month,  year: today.year)
     @prev_ald    = Ald.find_by(month: prev.month,   year: prev.year)
@@ -17,6 +18,9 @@ class HomeController < ApplicationController
     missing_curr = @current_ald.nil?
     last_day     = today == today.end_of_month
 
+    puts("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
+    puts(@current_oxy.inspect)
+    puts(@current_cmpc.inspect)
     @show_ald_alert   = false
     @ald_missing_date = nil
 
