@@ -13,6 +13,7 @@ module Api
         month = params[:month].present? ? params[:month].to_i : Date.current.month
         start_date = Date.new(year, month, 1)
         end_date   = start_date.end_of_month
+        Rails.logger.info "CMPCCHECK month=#{month.inspect} year=#{year.inspect}"
 
         facturacions =
           Facturacion
@@ -33,6 +34,7 @@ module Api
         otros = Otro
                   .includes(:empresa)
                   .where(month: month, year: year)
+        Rails.logger.info "CMPCCHECK current_cmpc=#{current_cmpc.inspect} month=#{month.inspect} year=#{year.inspect}"
 
         render json: {
           facturacions: facturacions.as_json,
