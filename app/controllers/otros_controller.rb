@@ -39,10 +39,7 @@ class OtrosController < ApplicationController
 
   # GET /otros/new
   def new
-    @otro = Otro.new(
-      year:  [params[:year].to_i, Date.current.year].find(&:positive?) || Date.current.year,
-      month: params[:month] || Date.current.month
-    )
+    @otro = Otro.new
   end
 
   def create
@@ -90,7 +87,7 @@ class OtrosController < ApplicationController
   end
 
   def otro_params
-    params.require(:otro).permit(:month, :year, :n1, :t_pesos, :v1)
+    params.require(:otro).permit(:n1, :t_pesos, :v1, :fecha)
   end
 
   def authorize_user

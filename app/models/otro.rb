@@ -7,6 +7,8 @@ class Otro < ApplicationRecord
   attr_accessor :t_pesos
 
   before_validation :calcular_total
+  before_validation :set_month_and_year, if: :fecha_venta_changed?
+
   validates :v1, numericality: { greater_than_or_equal_to: 0 }
   validates :n1, numericality: { greater_than_or_equal_to: 0 }
   validates :total, numericality: { greater_than_or_equal_to: 0 }
@@ -31,4 +33,13 @@ class Otro < ApplicationRecord
 
     self.total = total_big.round(2, BigDecimal::ROUND_HALF_UP)
   end
+
+
+  def set_month_and_year
+    return unless fecha.present?
+
+    self.month = fecha.month
+    self.year  = fecha.year
+  end
+
 end

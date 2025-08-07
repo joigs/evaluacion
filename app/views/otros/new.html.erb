@@ -40,20 +40,11 @@
 
 
     <div class="form-group">
-      <%= form.label :month, "Mes", class: "block text-gray-300" %>
-      <%= form.select :month,
-                      options_for_select(months.each_with_index.map { |n,i| ["#{(i+1).to_s.rjust(2,'0')} – #{n}", i+1] }, @otro.month),
-                      {},
-                      class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
-    </div>
-
-    <% years = (2025..Date.current.year).to_a.reverse %>
-    <div class="form-group">
-      <%= form.label :year, "Año", class: "block text-gray-300" %>
-      <%= form.select :year,
-                      options_for_select(years, (@otro.year || Date.current.year)),
-                      {},
-                      class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+      <%= form.label :fecha, "Fecha de venta", class: "block text-gray-300" %>
+      <%= form.text_field :fecha,
+                          placeholder: "Selecciona una fecha",
+                          id: "fecha_picker",
+                          class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
     </div>
 
 
@@ -71,7 +62,6 @@
                             step: 0.0001,
                             min: 0,
                             required: true,
-                            value: (@otro.v1 || 0.10),
                             class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
     </div>
 
@@ -92,3 +82,36 @@
     </div>
   <% end %>
 </div>
+
+<script>
+
+    function initFechaPicker() {
+        const el = document.getElementById("fecha_picker");
+        if (el && !el._flatpickr) {         // Evita inicializar dos veces
+            flatpickr(el, {
+                locale: "es",                   // Locale ya definido por es.js
+                dateFormat: "Y-m-d",            // Valor que llega al servidor
+                altInput: true,
+                altFormat: "d-m-Y",             // Formato para el usuario
+                minDate: "2020-01-01",
+                maxDate: "3000-12-31",
+                static: false
+            });
+        }
+    }
+
+    /* Iniciar en todas las rutas posibles */
+    document.addEventListener("DOMContentLoaded", initFechaPicker);
+    document.addEventListener("turbo:load",     initFechaPicker);
+    document.addEventListener("turbo:render",   initFechaPicker);
+    window.addEventListener( "pageshow",        initFechaPicker);
+
+    /* Destruir antes de que Turbo guarde el snapshot */
+    document.addEventListener("turbo:before-cache", () => {
+        const el = document.getElementById("fecha_picker");
+        if (el && el._flatpickr) {
+            el._flatpickr.destroy();
+            el._flatpickr = null;
+        }
+    });
+</script>
