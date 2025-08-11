@@ -5,9 +5,9 @@ class Otro < ApplicationRecord
   belongs_to :empresa
 
   attr_accessor :t_pesos
+  before_validation :set_month_and_year if :fecha_changed?
 
   before_validation :calcular_total
-  before_validation :set_month_and_year, if: :fecha_venta_changed?
 
   validates :v1, numericality: { greater_than_or_equal_to: 0 }
   validates :n1, numericality: { greater_than_or_equal_to: 0 }
