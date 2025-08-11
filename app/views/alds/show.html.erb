@@ -31,9 +31,10 @@
         <p class="text-xl font-semibold"><%= @ald.year %></p>
       </div>
 
+
       <div class="bg-gray-800 rounded-md p-4">
         <h2 class="text-sm uppercase tracking-wide text-gray-400">
-          Número de trámites
+          Número de trámites (0.1 UF)
         </h2>
         <p class="text-xl font-semibold"><%= @ald.n1 %></p>
       </div>
@@ -45,6 +46,27 @@
           <% if @v1_clp %>
             <span class="block text-sm text-gray-400">
               ≈ <%= number_to_currency(@v1_clp, unit: "$", precision: 0, delimiter: ".") %> CLP
+            </span>
+          <% end %>
+        </p>
+      </div>
+
+
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">
+          Número de trámites (0.27 UF)
+        </h2>
+        <p class="text-xl font-semibold"><%= @ald.n2 %></p>
+      </div>
+
+      <div class="bg-gray-800 rounded-md p-4">
+        <h2 class="text-sm uppercase tracking-wide text-gray-400">Valor comisión (UF)</h2>
+        <p class="text-xl font-semibold">
+          <%= number_with_precision(@v2_uf, precision: 2) %>
+          <% if @v2_clp %>
+            <span class="block text-sm text-gray-400">
+              ≈ <%= number_to_currency(@v2_clp, unit: "$", precision: 0, delimiter: ".") %> CLP
             </span>
           <% end %>
         </p>

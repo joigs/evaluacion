@@ -22,8 +22,17 @@
     <%= form.hidden_field :year,  value: @ald.year  %>
 
     <div class="form-group">
-      <%= form.label :n1, "Número de trámites", class: "block text-gray-300" %>
+      <%= form.label :n1, "Número de trámites 0.1 uf", class: "block text-gray-300" %>
       <%= form.number_field :n1,
+                            min: 0,
+                            required: true,
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+    </div>
+
+
+    <div class="form-group">
+      <%= form.label :n2, "Número de trámites 0.27 uf", class: "block text-gray-300" %>
+      <%= form.number_field :n2,
                             min: 0,
                             required: true,
                             class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>

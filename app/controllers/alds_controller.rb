@@ -32,6 +32,8 @@ class AldsController < ApplicationController
 
     @v1_uf      = Ald::V1
     @v1_clp     = iva ? (@v1_uf * iva.valor).round(0) : nil
+    @v2_uf      = Ald::V2
+    @v2_clp     = iva ? (@v2_uf * iva.valor).round(0) : nil
     @total_clp  = iva ? (@ald.total * iva.valor).round(0) : nil
     @iva_missing = iva.nil?
   end
@@ -84,7 +86,7 @@ class AldsController < ApplicationController
   end
 
   def ald_params
-    params.require(:ald).permit(:month, :year, :n1, :t_pesos)
+    params.require(:ald).permit(:month, :year, :n1, :n2, :t_pesos)
   end
 
   def authorize_user
