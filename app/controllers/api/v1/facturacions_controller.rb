@@ -12,7 +12,7 @@ module Api
         year  = params[:year].present?  ? params[:year].to_i  : Date.current.year
 
 
-        full_year = params[:month].blank? || params[:month].to_s == 'all'
+        full_year =  params[:month].to_s == 'all'
 
         if full_year
           start_date = Date.new(year, 1, 1)
