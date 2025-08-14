@@ -10,10 +10,39 @@ module Api
       def index
 
         year  = params[:year].present?  ? params[:year].to_i  : Date.current.year
+
+
+        full_year = params[:month].blank? || params[:month].to_s == 'all'
+
+        if full_year
+          start_date = Date.new(year, 1, 1)
+          end_date   = Date.new(year, 12, 31)
+          Rails.logger.info "CMPCCHECK full_year=true year=#{year.inspect}"
+
+          facturacions =
+            Facturacion
+              .where.not(oc: nil)
+              .where(fecha_inspeccion: start_date..end_date)
+              .distinct
+
+          current_oxy  = Oxy.includes(:oxy_records).where(year: year).order(:month)
+          current_cmpc = Cmpc.includes(:cmpc_records).where(year: year).order(:month)
+          current_ald  = Ald.where(year: year).order(:month)
+          otros        = Otro.includes(:empresa).where(year: year).order(:month)
+
+          render json: {
+            facturacions: facturacions.as_json,
+            current_oxy:  current_oxy.as_json(include: :oxy_records),
+            current_cmpc: current_cmpc.as_json(include: :cmpc_records),
+            current_ald:  current_ald.as_json,
+            otros:        otros.as_json(include: { empresa: { only: [:nombre] } })
+          }
+
+        else
+
         month = params[:month].present? ? params[:month].to_i : Date.current.month
         start_date = Date.new(year, month, 1)
         end_date   = start_date.end_of_month
-        Rails.logger.info "CMPCCHECK month=#{month.inspect} year=#{year.inspect}"
 
         facturacions =
           Facturacion
@@ -34,7 +63,6 @@ module Api
         otros = Otro
                   .includes(:empresa)
                   .where(month: month, year: year)
-        Rails.logger.info "CMPCCHECK current_cmpc=#{current_cmpc.inspect} month=#{month.inspect} year=#{year.inspect}"
 
         render json: {
           facturacions: facturacions.as_json,
@@ -42,6 +70,8 @@ module Api
           current_cmpc: current_cmpc.as_json(include: :cmpc_records),
           current_ald:  current_ald&.as_json,
           otros:        otros.as_json(include: { empresa: { only: [:nombre] } })        }
+        end
+
       end
 
 
