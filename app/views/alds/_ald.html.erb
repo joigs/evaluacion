@@ -1,26 +1,23 @@
-<div id="<%= dom_id ald %>">
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Month:</strong>
-    <%= ald.month %>
-  </p>
+<div id="<%= dom_id(ald) %>" class="w-full">
+  <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-gray-200">
+    <div class="flex items-baseline gap-2">
+      <dt class="text-gray-400">Mes</dt>
+      <dd class="font-semibold"><%= ald.month %></dd>
+    </div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Year:</strong>
-    <%= ald.year %>
-  </p>
+    <div class="flex items-baseline gap-2">
+      <dt class="text-gray-400">Año</dt>
+      <dd class="font-semibold"><%= ald.year %></dd>
+    </div>
 
-  <p class="my-5">
-    <strong class="block font-medium mb-1">N1:</strong>
-    <%= ald.n1 %>
-  </p>
+    <div class="flex items-baseline gap-2">
+      <dt class="text-gray-400">Número trámites</dt>
+      <dd class="font-semibold"><%= ald.n1 %></dd>
+    </div>
 
-
-
-  <p class="my-5">
-    <strong class="block font-medium mb-1">Total:</strong>
-    <%= ald.total %>
-  </p>
-
-
-
+    <div class="flex items-baseline gap-2">
+      <dt class="text-gray-400">Total</dt>
+      <dd class="font-semibold"><%= number_with_precision(ald.total, precision: 2) %> UF</dd>
+    </div>
+  </dl>
 </div>

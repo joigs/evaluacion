@@ -5,35 +5,42 @@
     </p>
   <% end %>
 
-  <% content_for :title, "Cmpcs" %>
+  <% content_for :title, "Oxies" %>
+
 
   <div class="flex justify-between items-center mb-6">
-    <h1 class="text-3xl sm:text-4xl font-bold text-black">Cmpc</h1>
+    <h1 class="text-3xl sm:text-4xl font-bold text-black">Oxy</h1>
 
   </div>
-
   <div class="bg-gray-900 p-4 rounded-lg shadow-md">
     <h2 class="text-xl font-bold mb-4">Listado</h2>
 
-    <% if @cmpcs.blank? %>
+    <% if @oxies.blank? %>
       <p class="text-gray-400">No hay registros.</p>
     <% else %>
-      <ul id="cmpcs" class="space-y-4">
-        <% @cmpcs.each do |cmpc| %>
+      <ul id="oxies" class="space-y-4">
+        <% @oxies.each do |oxy| %>
           <li class="bg-gray-800 rounded-md p-4 flex justify-between items-center">
             <div>
               <p class="font-semibold">
-                Mes: <%= cmpc.month.to_s.rjust(2, '0') %> &nbsp;|&nbsp;
-                Año: <%= cmpc.year %>
+                Mes: <%= oxy.month.to_s.rjust(2, '0') %> &nbsp;|&nbsp;
+                Año: <%= oxy.year %>
               </p>
               <p class="text-sm text-gray-400">
-                Servicios: <%= cmpc.numero_servicios %> &nbsp;|&nbsp;
-                Total (UF): <%= number_with_precision(cmpc.total_uf, precision: 2) %>
+                Conductores: <%= number_with_delimiter(oxy.numero_conductores) %>
+                &nbsp;|&nbsp;
+                Suma: <%= number_with_precision(oxy.suma, precision: 2) %>
+                &nbsp;|&nbsp;
+                Total (UF): <%= number_with_precision(oxy.total_uf, precision: 2) %>
+                <% if oxy.arrastre.present? %>
+                  &nbsp;|&nbsp;
+                  Arrastre: <%= number_with_delimiter(oxy.arrastre) %>
+                <% end %>
               </p>
             </div>
 
             <%= link_to "Ver",
-                        cmpc_path(cmpc),
+                        oxy_path(oxy),
                         class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md" %>
           </li>
         <% end %>

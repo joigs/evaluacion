@@ -19,7 +19,9 @@ class OxiesController < ApplicationController
   end
 
 
-
+def index
+  @oxies = Oxy.order(year: :desc, month: :desc)
+end
   def create
     p = params.require(:oxy)
               .permit(:month, :year, :suma,

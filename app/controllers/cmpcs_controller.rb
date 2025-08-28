@@ -58,7 +58,9 @@ class CmpcsController < ApplicationController
   end
 
 
-
+  def index
+    @cmpcs = Cmpc.order(year: :desc, month: :desc)
+  end
   def destroy_records
     @cmpc = Cmpc.find(params[:id])
     ids  = params[:ids] || []

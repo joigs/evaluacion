@@ -85,7 +85,7 @@ Rails.application.routes.draw do
     end
 
     resources :permisos
-    resources :oxies, only: [:new, :create, :show] do
+    resources :oxies, only: [:new, :create, :show, :index] do
       member do
         post :add_records
         delete :destroy_records
