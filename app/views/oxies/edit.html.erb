@@ -1,0 +1,45 @@
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8 bg-gray-900 p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-semibold text-white mb-6">
+    OXY – <%= "%02d" % @oxy.month %>/<%= @oxy.year %>
+  </h2>
+
+  <%= form_with(model: @oxy, builder: CustomFormBuilder, local: true, class: "space-y-4") do |form| %>
+    <% if @oxy.errors.any? %>
+      <% error_messages = @oxy.errors.full_messages.map { |msg| "<li>#{j msg}</li>" }.join %>
+      <%= javascript_tag do %>
+        Swal.fire({
+        icon: 'error',
+        title: 'Error: no se pudo guardar el registro',
+        html: '<ul style="text-align: left;">' + '<%= raw error_messages %>' + '</ul>',
+        confirmButtonText: 'Entendido'
+        })
+      <% end %>
+    <% end %>
+
+
+    <div class="form-group">
+      <%= form.label :suma, "Valor por conductor (UF)", class: "block text-gray-300" %>
+      <%= form.number_field :suma,
+                            step: 0.01,
+                            min: 0,
+                            required: true,
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :conductores_eliminados, "Conductores eliminados este mes", class: "block text-gray-300" %>
+      <%= form.number_field :conductores_eliminados,
+                            min: 0,
+                            required: true,
+                            value: (@oxy.conductores_eliminados || 0),
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+      <p class="text-sm text-gray-400 mt-1">
+      </p>
+    </div>
+
+
+    <div>
+      <%= form.submit "Guardar cambios", class: "w-full bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" %>
+    </div>
+  <% end %>
+</div>

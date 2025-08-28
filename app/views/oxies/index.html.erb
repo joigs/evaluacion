@@ -39,11 +39,15 @@
               </p>
             </div>
 
-            <%= link_to "Ver",
-                        oxy_path(oxy),
-                        class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md" %>
+            <div class="flex items-center gap-3">
+              <%= link_to "Ver", oxy,
+                          class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md shrink-0" %>
+              <%= link_to "Modificar", edit_oxy_path(oxy),
+                          class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md shrink-0" %>
+            </div>
           </li>
-        <% end %>
+
+      <% end %>
       </ul>
     <% end %>
   </div>

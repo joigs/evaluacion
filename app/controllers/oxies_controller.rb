@@ -61,6 +61,44 @@ end
     @oxy = Oxy.includes(:oxy_records).find(params[:id])
   end
 
+  def edit
+    oxy
+
+    @oxy.conductores_eliminados ||= 0
+  end
+
+  def update
+    oxy
+    p = params.require(:oxy).permit(:suma, :conductores_eliminados)
+
+    @oxy.assign_attributes(suma: p[:suma])
+
+    eliminados = p[:conductores_eliminados].to_i
+    prev_month, prev_year = prev_period(@oxy.month, @oxy.year)
+    prev = Oxy.find_by(month: prev_month, year: prev_year)
+
+    base_prev = prev&.numero_conductores.to_i
+    arrastre  = base_prev - eliminados
+    registros = @oxy.oxy_records.count
+    calculado = arrastre + registros
+
+    if calculado.negative?
+      @oxy.errors.add(:numero_conductores, "el resultado sería negativo. Revisa los valores.")
+      @oxy.conductores_eliminados = eliminados
+      return render :edit, status: :unprocessable_entity
+    end
+
+    @oxy.arrastre            = arrastre
+    @oxy.numero_conductores  = calculado
+    @oxy.total_uf            = (@oxy.suma.to_d * calculado).round(2)
+    @oxy.conductores_eliminados = eliminados
+
+    if @oxy.save
+      redirect_to @oxy, notice: "Registro actualizado correctamente"
+    else
+      render :edit, status: :unprocessable_entity
+    end
+  end
 
   def add_records
     @oxy  = Oxy.find(params[:id])
@@ -126,5 +164,9 @@ end
                   alert: "Ya existe un registro Oxy para " \
                     "#{I18n.l Date.current, format: '%B %Y'}."
     end
+  end
+  def prev_period(month, year)
+    d = Date.new(year, month, 1) << 1
+    [d.month, d.year]
   end
 end
