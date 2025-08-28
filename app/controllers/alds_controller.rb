@@ -60,18 +60,24 @@ class AldsController < ApplicationController
 
 
   # GET /alds/1/edit
-  def edit; end
+  def edit
+    if @ald.total.present?
+      iva = Iva.find_by(year: @ald.year, month: @ald.month)
+
+    end
+  end
 
   # POST /alds
 
   # PATCH/PUT /alds/1
   def update
     if @ald.update(ald_params)
-      redirect_to @ald, notice: "ALD actualizado con éxito."
+      redirect_to @ald, notice: "ALD actualizado correctamente."
     else
       render :edit, status: :unprocessable_entity
     end
   end
+
 
   # DELETE /alds/1
   def destroy
@@ -86,7 +92,7 @@ class AldsController < ApplicationController
   end
 
   def ald_params
-    params.require(:ald).permit(:month, :year, :n1, :n2, :t_pesos)
+    params.require(:ald).permit(:month, :year, :n1, :n2, :total_pesos)
   end
 
   def authorize_user

@@ -20,6 +20,8 @@
             <%= render ald %>
             <%= link_to "Ver", ald,
                         class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md ml-4 shrink-0" %>
+            <%= link_to "Modificar", edit_ald_path(ald),
+                        class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md ml-4 shrink-0" %>
           </li>
         <% end %>
       </ul>

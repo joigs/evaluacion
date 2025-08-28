@@ -4,7 +4,6 @@ require "bigdecimal/util"
 class Ald < ApplicationRecord
   V1 = BigDecimal("0.1")
   V2 = BigDecimal("0.27")
-  attr_accessor :t_pesos
 
   before_validation :calcular_total
 
@@ -18,7 +17,7 @@ class Ald < ApplicationRecord
     end
 
     n1_big      = BigDecimal(n1.to_s,       12)
-    t_pesos_big = BigDecimal(t_pesos.to_s,  12)
+    t_pesos_big = BigDecimal(total_pesos.to_s,  12)
     uf_big      = BigDecimal(iva.valor.to_s,12)
     n2_big       = BigDecimal(n2.to_s,       12)
     t_uf    = t_pesos_big / uf_big

@@ -1,8 +1,57 @@
-<div class="mx-auto md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing ald</h1>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8 bg-gray-900 p-6 rounded-lg shadow-md">
+  <% months_es = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre] %>
 
-  <%= render "form", ald: @ald %>
+  <h2 class="text-2xl font-semibold text-white mb-6">
+    ALD – <%= "#{months_es[@ald.month - 1]} #{@ald.year}" %>
+  </h2>
 
-  <%= link_to "Show this ald", @ald, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
-  <%= link_to "Back to alds", alds_path, class: "ml-2 rounded-lg py-3 px-5 bg-gray-100 inline-block font-medium" %>
+  <%= form_with(model: @ald, builder: CustomFormBuilder, local: true, class: "space-y-4") do |form| %>
+    <% if @ald.errors.any? %>
+      <% error_messages = @ald.errors.full_messages.map { |msg| "<li>#{j msg}</li>" }.join %>
+      <%= javascript_tag do %>
+        Swal.fire({
+        icon: 'error',
+        title: 'Error: no se pudo guardar el registro',
+        html: '<ul style="text-align: left;">' + '<%= raw error_messages %>' + '</ul>',
+        confirmButtonText: 'Entendido'
+        })
+      <% end %>
+    <% end %>
+
+    <%= form.hidden_field :month, value: @ald.month %>
+    <%= form.hidden_field :year,  value: @ald.year  %>
+
+    <div class="form-group">
+      <%= form.label :n1, "Número de trámites 0.1 UF", class: "block text-gray-300" %>
+      <%= form.number_field :n1,
+                            min: 0,
+                            required: true,
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :n2, "Número de trámites 0.27 UF", class: "block text-gray-300" %>
+      <%= form.number_field :n2,
+                            min: 0,
+                            required: true,
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :total_pesos, "Total valor de trámites (CLP)", class: "block text-gray-300" %>
+      <%= form.number_field :total_pesos,
+                            step: 0.01,
+                            min: 0,
+                            required: true,
+      class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+    </div>
+
+    <div class="flex gap-3">
+      <%= form.submit "Guardar cambios",
+                      class: "w-full bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" %>
+      <%= link_to "Cancelar",
+                  ald_path(@ald),
+                  class: "w-full text-center bg-gray-700 hover:bg-gray-800 text-blue-400 hover:text-white font-bold py-2 px-4 rounded" %>
+    </div>
+  <% end %>
 </div>
