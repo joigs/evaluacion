@@ -6,24 +6,21 @@ export default class extends Controller {
 
     connect () {
         this.selectionEnabled = false
-        this._setDeleteBtnVisible(false)   // oculto al iniciar
-        this._setDeleteBtnEnabled(false)   // por si el HTML no viene disabled
+        this._setDeleteBtnVisible(false)
+        this._setDeleteBtnEnabled(false)
     }
 
     selectMode () {
         this.selectionEnabled = !this.selectionEnabled
 
-        // Mostrar/ocultar checkboxes
         this.checkboxTargets.forEach(cb => {
             cb.classList.toggle("hidden", !this.selectionEnabled)
             if (!this.selectionEnabled) cb.checked = false
         })
 
-        // Al entrar a selección: mostrar botón pero deshabilitado hasta que marquen algo
         this._setDeleteBtnVisible(this.selectionEnabled)
         this._setDeleteBtnEnabled(this.selectionEnabled ? this._anyChecked() : false)
 
-        // Cambiar etiqueta del botón principal
         this.selectBtnTarget.textContent = this.selectionEnabled ? "Cancelar" : "Seleccionar"
     }
 
@@ -66,18 +63,15 @@ export default class extends Controller {
         })
     }
 
-    // Toast post-submit (Turbo)
     afterDelete (e) {
         if (e.detail.success) {
             Swal.fire({ icon: "success", title: "Registros eliminados", timer: 1600, showConfirmButton: false })
-            // opcional: salir de modo selección
-            // this.selectMode()
+
         } else {
             Swal.fire({ icon: "error", title: "No se pudieron eliminar", text: "Inténtalo nuevamente." })
         }
     }
 
-    // ——— helpers ———
     _anyChecked () { return this.checkboxTargets.some(cb => cb.checked) }
 
     _setDeleteBtnEnabled (enabled) {

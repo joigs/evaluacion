@@ -6,24 +6,20 @@ export default class extends Controller {
 
     connect () {
         this.selectionEnabled = false
-        this._setDeleteBtnVisible(false)   // oculto al iniciar
+        this._setDeleteBtnVisible(false)
     }
 
     selectMode () {
         this.selectionEnabled = !this.selectionEnabled
 
-        // Mostrar/ocultar checkboxes
         this.checkboxTargets.forEach(cb => {
             cb.classList.toggle("hidden", !this.selectionEnabled)
             if (!this.selectionEnabled) cb.checked = false
         })
 
-        // Mostrar el botón cuando entro a selección; ocultarlo al salir
         this._setDeleteBtnVisible(this.selectionEnabled)
-        // Al entrar, parte deshabilitado hasta que marquen algo
         this._setDeleteBtnEnabled(this._anyChecked())
 
-        // Texto del botón principal
         this.selectBtnTarget.textContent = this.selectionEnabled ? "Cancelar" : "Seleccionar"
     }
 
@@ -67,7 +63,6 @@ export default class extends Controller {
         })
     }
 
-    // Turbo: éxito / error para los toasts
     afterDelete (e) {
         if (e.detail.success) {
             Swal.fire({ icon: "success", title: "Registros eliminados", timer: 1600, showConfirmButton: false })
