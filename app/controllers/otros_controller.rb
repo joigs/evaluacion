@@ -67,7 +67,13 @@ class OtrosController < ApplicationController
 
   # PATCH/PUT /otros/1
   def update
-    if @otro.update(otro_params)
+    empresa_nombre = params[:otro].delete(:empresa_nombre_hidden).to_s.strip
+    empresa = Empresa.find_or_create_by(nombre: empresa_nombre) if empresa_nombre.present?
+
+    # Asignamos empresa si vino (opcional)
+    @otro.empresa = empresa if empresa
+
+    if @otro.update(otro_params) # dispara before_validation -> set_month_and_year + calcular_total
       redirect_to @otro, notice: "Otro actualizado con éxito."
     else
       render :edit, status: :unprocessable_entity
