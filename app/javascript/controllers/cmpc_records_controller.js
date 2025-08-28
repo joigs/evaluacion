@@ -7,7 +7,6 @@ export default class extends Controller {
     connect () {
         this.selectionEnabled = false
         this._setDeleteBtnVisible(false)   // oculto al iniciar
-        this._setDeleteBtnEnabled(false)   // por si el HTML no viene disabled
     }
 
     selectMode () {
@@ -19,11 +18,12 @@ export default class extends Controller {
             if (!this.selectionEnabled) cb.checked = false
         })
 
-        // Al entrar a selección: mostrar botón pero deshabilitado hasta que marquen algo
+        // Mostrar el botón cuando entro a selección; ocultarlo al salir
         this._setDeleteBtnVisible(this.selectionEnabled)
-        this._setDeleteBtnEnabled(this.selectionEnabled ? this._anyChecked() : false)
+        // Al entrar, parte deshabilitado hasta que marquen algo
+        this._setDeleteBtnEnabled(this._anyChecked())
 
-        // Cambiar etiqueta del botón principal
+        // Texto del botón principal
         this.selectBtnTarget.textContent = this.selectionEnabled ? "Cancelar" : "Seleccionar"
     }
 
@@ -52,6 +52,7 @@ export default class extends Controller {
             customClass: { confirmButton: 'mr-10' }
         }).then(result => {
             if (!result.isConfirmed) return
+
             Swal.fire({
                 icon: "question",
                 title: "Confirmar eliminación",
@@ -66,19 +67,19 @@ export default class extends Controller {
         })
     }
 
-    // Toast post-submit (Turbo)
+    // Turbo: éxito / error para los toasts
     afterDelete (e) {
         if (e.detail.success) {
             Swal.fire({ icon: "success", title: "Registros eliminados", timer: 1600, showConfirmButton: false })
-            // opcional: salir de modo selección
-            // this.selectMode()
         } else {
             Swal.fire({ icon: "error", title: "No se pudieron eliminar", text: "Inténtalo nuevamente." })
         }
     }
 
     // ——— helpers ———
-    _anyChecked () { return this.checkboxTargets.some(cb => cb.checked) }
+    _anyChecked () {
+        return this.checkboxTargets.some(cb => cb.checked)
+    }
 
     _setDeleteBtnEnabled (enabled) {
         const btn = this.deleteBtnTarget
@@ -93,5 +94,6 @@ export default class extends Controller {
 
     _setDeleteBtnVisible (visible) {
         this.deleteBtnTarget.classList.toggle("hidden", !visible)
+        if (visible) this._setDeleteBtnEnabled(this._anyChecked())
     }
 }

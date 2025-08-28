@@ -19,15 +19,16 @@
   <% if records.any? %>
     <%= form_with url: destroy_records_oxy_path(oxy),
                   method: :delete,
-                  data:  { turbo_stream: true },
+                  data:  { turbo_stream: true, action: "turbo:submit-end->oxy-records#afterDelete" },
                   html:  { data: { "oxy-records-target": "form" } } do %>
 
-        <button type="button"
-                data-oxy-records-target="deleteBtn"
-                data-action="oxy-records#confirmDelete"
-                class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 ml-4 mb-6 rounded">
-          Eliminar seleccionados
-        </button>
+      <button type="button"
+              data-oxy-records-target="deleteBtn"
+              data-action="oxy-records#confirmDelete"
+              class="hidden bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 ml-4 mb-6 rounded"
+              disabled>
+        Eliminar seleccionados
+      </button>
 
       <table class="w-full text-left text-sm">
         <thead>
@@ -43,7 +44,7 @@
             <td class="py-2 px-2">
               <input type="checkbox" name="ids[]" value="<%= r.id %>"
                      data-oxy-records-target="checkbox"
-                     data-action="oxy-records#toggleSelection"
+                     data-action="change->oxy-records#toggleSelection"
                      class="hidden cursor-pointer" />
             </td>
             <td class="py-2 px-3 font-mono"><%= i + 1 %></td>

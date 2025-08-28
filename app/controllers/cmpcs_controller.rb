@@ -61,24 +61,59 @@ class CmpcsController < ApplicationController
   def index
     @cmpcs = Cmpc.order(year: :desc, month: :desc)
   end
+  # app/controllers/cmpcs_controller.rb
   def destroy_records
     @cmpc = Cmpc.find(params[:id])
-    ids  = params[:ids] || []
+    ids   = Array(params[:ids]).map(&:to_i).uniq
 
-    ActiveRecord::Base.transaction do
-      deleted = @cmpc.cmpc_records.where(id: ids).delete_all
-      @cmpc.decrement!(:numero_servicios, deleted)
-      @cmpc.decrement!(:total_uf,           @cmpc.suma * deleted)
+    if ids.blank?
+      respond_to do |format|
+        format.turbo_stream { head :unprocessable_entity }
+        format.html { redirect_to cmpc_path(@cmpc), alert: "No seleccionaste registros." }
+      end
+      return
+    end
+
+    servicios_eliminados = 0
+    total_uf_a_restar    = BigDecimal("0")
+
+    Cmpc.transaction do
+      registros = @cmpc.cmpc_records.where(id: ids).to_a
+
+      registros.each do |r|
+        # Si algún día agregas columna 'cantidad', la usamos; si no existe, cuenta 1 por fila.
+        cantidad = r.respond_to?(:cantidad) && r.cantidad.present? ? r.cantidad.to_i : 1
+        suma_dec = BigDecimal(r.suma.to_s) # nil -> 0
+        servicios_eliminados += cantidad
+        total_uf_a_restar    += (suma_dec * cantidad)
+      end
+
+      # Destruye con callbacks/validaciones
+      registros.each(&:destroy!)
+
+      # Actualiza totales evitando negativos
+      @cmpc.numero_servicios = [@cmpc.numero_servicios - servicios_eliminados, 0].max
+      @cmpc.total_uf         = [@cmpc.total_uf - total_uf_a_restar, 0].max
+      @cmpc.save!
     end
 
     @cmpc.reload
-    @cmpc.cmpc_records.reload
 
     respond_to do |format|
-      format.turbo_stream
-      format.html { redirect_to @cmpc, notice: "#{deleted} registros eliminados" }
+      format.turbo_stream # renderiza destroy_records.turbo_stream.erb
+      format.html { redirect_to cmpc_path(@cmpc), notice: "Registros eliminados correctamente." }
+    end
+  rescue => e
+    Rails.logger.error("destroy_records error: #{e.class}: #{e.message}")
+    respond_to do |format|
+      # Importante: 422 para que e.detail.success sea false en Stimulus
+      format.turbo_stream { head :unprocessable_entity }
+      format.html { redirect_to cmpc_path(@cmpc), alert: "No se pudieron eliminar los registros." }
     end
   end
+
+
+
 
 
 
