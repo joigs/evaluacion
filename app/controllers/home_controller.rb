@@ -18,9 +18,7 @@ class HomeController < ApplicationController
     missing_curr = @current_ald.nil?
     last_day     = today == today.end_of_month
 
-    puts("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh")
-    puts(@current_oxy.inspect)
-    puts(@current_cmpc.inspect)
+
     @show_ald_alert   = false
     @ald_missing_date = nil
 
