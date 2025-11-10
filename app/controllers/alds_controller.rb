@@ -26,16 +26,20 @@ class AldsController < ApplicationController
   # GET /alds/1
   def show
     @ald = Ald.find(params[:id])
+    iva  = Iva.find_by(year: @ald.year, month: @ald.month)
 
-    # UF para el período
-    iva = Iva.find_by(year: @ald.year, month: @ald.month)
+    @v1_uf, @v2_uf = Ald::V1, Ald::V2
+    if iva
+      uf    = iva.valor.to_d
+      n1    = @ald.n1.to_d
+      n2    = @ald.n2.to_d
+      pesos = @ald.total_pesos.to_d
 
-    @v1_uf      = Ald::V1
-    @v1_clp     = iva ? (@v1_uf * iva.valor).round(0) : nil
-    @v2_uf      = Ald::V2
-    @v2_clp     = iva ? (@v2_uf * iva.valor).round(0) : nil
-    @total_clp  = iva ? (@ald.total * iva.valor).round(0) : nil
-    @iva_missing = iva.nil?
+      @total_clp = (((@v1_uf * n1 + @v2_uf * n2) * uf) + pesos)
+                     .round(0, BigDecimal::ROUND_HALF_UP)
+    else
+      @total_clp = nil
+    end
   end
   # GET /alds/new
   def new
