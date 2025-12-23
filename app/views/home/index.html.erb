@@ -141,12 +141,6 @@
     </div>
   </div>
 
-  <% unless @current_oxy %>
-    <div class="hidden"
-         data-controller="oxy-alert"
-         data-oxy-alert-message-value="No existe un registro Oxy para <strong><%= "#{months_es[hoy.month - 1]} #{hoy.year}" %></strong>."
-         data-oxy-alert-new-url-value="<%= new_oxy_path %>"></div>
-  <% end %>
 
   <% if @show_ald_alert && @ald_missing_date %>
     <div class="hidden"
