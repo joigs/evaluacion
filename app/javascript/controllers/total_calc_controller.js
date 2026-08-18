@@ -10,8 +10,16 @@ export default class extends Controller {
     calcular() {
         if (!this.hasOutputTarget) return
 
-        const n = this.#numero(this.hasCantidadTarget ? this.cantidadTarget.value : 0)
-        const v = this.#numero(this.hasValorTarget ? this.valorTarget.value : 0)
+        const nBruto = this.hasCantidadTarget ? this.cantidadTarget.value : ""
+        const vBruto = this.hasValorTarget ? this.valorTarget.value : ""
+
+        if (String(nBruto).trim() === "" || String(vBruto).trim() === "") {
+            this.outputTarget.value = ""
+            return
+        }
+
+        const n = this.#numero(nBruto)
+        const v = this.#numero(vBruto)
 
         const total = Math.round(n * v * 100) / 100
 

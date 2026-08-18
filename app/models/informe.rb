@@ -8,7 +8,7 @@ class Informe < ApplicationRecord
   validates :mandante_rut,    presence: true
   validates :mandante_nombre, presence: true
   validates :fecha,           presence: true
-  validates :n_informes,     numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :n_informes,     numericality: { only_integer: true, greater_than: 0 }
   validates :valor_unitario, numericality: { greater_than_or_equal_to: 0 }
   validates :total,          numericality: { greater_than_or_equal_to: 0 }
 

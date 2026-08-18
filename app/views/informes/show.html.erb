@@ -2,13 +2,18 @@
 
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 my-8">
 
-  <div class="flex items-center justify-start mb-6">
+  <div class="flex items-center justify-between mb-6">
     <%= link_to "Volver atrás",
                 informes_path,
                 class: "inline-flex items-center px-4 py-2 border border-transparent \
                         text-base leading-6 font-medium rounded-md text-blue-400 \
                         bg-gray-800 hover:bg-blue-800 hover:text-white focus:outline-none \
                         focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out" %>
+
+    <%= link_to "Modificar",
+                edit_informe_path(@informe),
+                class: "inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 \
+                        text-gray-900 font-bold rounded-md focus:outline-none focus:shadow-outline" %>
   </div>
 
   <div class="bg-gray-900 p-6 rounded-lg shadow-md text-gray-200 space-y-6">
@@ -55,7 +60,7 @@
           <%= number_with_precision(@informe.total, precision: 2) %>
           <% if @total_clp %>
             <span class="block text-lg text-gray-400 font-normal">
-              = <%= number_to_currency(@total_clp, unit: "$", precision: 0, delimiter: ".") %> CLP
+              ≈ <%= number_to_currency(@total_clp, unit: "$", precision: 0, delimiter: ".") %> CLP
             </span>
           <% else %>
             <span class="block text-sm text-red-400 font-normal">

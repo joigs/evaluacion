@@ -138,6 +138,21 @@
         </div>
       </div>
 
+      <div class="group overflow-hidden p-8 rounded-xl bg-gray-900 shadow-lg border border-gray-700 hover:shadow-xl transition-shadow duration-300 ease-in-out">
+        <div class="text-center">
+          <h3 class="text-xl font-semibold text-white">Informes</h3>
+          <p class="text-sm text-gray-300 mt-2">Informes por empresa mandante</p>
+          <div class="mt-4">
+            <%= link_to informes_path,
+                        class: "inline-block mb-6 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" do %>
+              Ver índice de Informes
+            <% end %>
+            <%= link_to "Crear ahora", new_informe_path,
+                        class: "inline-block bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -155,4 +170,3 @@
 
   <%= render template: "facturacions/index" %>
 </section>
-

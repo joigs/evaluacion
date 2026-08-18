@@ -1,10 +1,10 @@
+require "bigdecimal"
+
 class InformesController < ApplicationController
-  require "bigdecimal"
   before_action :set_informe,     only: [:show, :edit, :update, :destroy]
   before_action :authorize_user
   before_action :load_mandantes,  only: [:new, :edit, :create, :update]
 
-  # GET /informes
   def index
     @months = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre]
     @years  = (2025..Date.current.year).to_a.reverse
@@ -21,11 +21,10 @@ class InformesController < ApplicationController
     @informes = Informe.where(month: sel_month, year: sel_year)
                        .order(:mandante_nombre)
 
-    iva      = Iva.find_by(year: sel_year, month: sel_month)
-    @uf_mes  = iva ? BigDecimal(iva.valor.to_s) : nil
+    iva     = Iva.find_by(year: sel_year, month: sel_month)
+    @uf_mes = iva ? BigDecimal(iva.valor.to_s) : nil
   end
 
-  # GET /informes/1
   def show
     iva = Iva.find_by(year: @informe.year, month: @informe.month)
 
@@ -33,12 +32,10 @@ class InformesController < ApplicationController
     @iva_missing = iva.nil?
   end
 
-  # GET /informes/new
   def new
-    @informe = Informe.new
+    @informe = Informe.new(n_informes: nil, valor_unitario: nil, total: nil)
   end
 
-  # POST /informes
   def create
     @informe = Informe.new(informe_params)
     @informe.mandante_nombre = resolve_mandante_nombre(@informe.mandante_rut)
@@ -50,10 +47,8 @@ class InformesController < ApplicationController
     end
   end
 
-  # GET /informes/1/edit
   def edit; end
 
-  # PATCH/PUT /informes/1
   def update
     @informe.assign_attributes(informe_params)
     @informe.mandante_nombre = resolve_mandante_nombre(@informe.mandante_rut)
@@ -65,14 +60,11 @@ class InformesController < ApplicationController
     end
   end
 
-  # DELETE /informes/1
   def destroy
     @informe.destroy
     redirect_to informes_path, notice: "Informe eliminado con éxito."
   end
 
-
-  # GET /informes/refresh_mandantes
   def refresh_mandantes
     data = RegistroMandantesApi::Client.new.refresh!
     render json: { data: data }, status: :ok
@@ -80,7 +72,6 @@ class InformesController < ApplicationController
     Rails.logger.error("[Informes] refresh mandantes falló: #{e.class} #{e.message}")
     render json: { error: "No se pudo actualizar la lista." }, status: :service_unavailable
   end
-
 
   private
 
