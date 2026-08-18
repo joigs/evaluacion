@@ -52,6 +52,7 @@ Rails.application.routes.draw do
     namespace :api do
       namespace :v1 do
         resources :facturacions, only: [:index, :show]
+        resources :informes,     only: [:index]
       end
     end
 
