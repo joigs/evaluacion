@@ -36,7 +36,7 @@
 
   <div class="bg-gray-900 p-4 rounded-lg shadow-md">
     <h2 class="text-xl font-bold mb-4">
-      Registros Informes – <%= "#{months_es[@selected_month - 1]} #{@selected_year}" %>
+      Informes - <%= "#{months_es[@selected_month - 1]} #{@selected_year}" %>
     </h2>
 
     <% if @informes.empty? %>
@@ -67,6 +67,16 @@
                           class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md" %>
               <%= link_to "Modificar", edit_informe_path(informe),
                           class: "px-3 py-1 bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold rounded-md" %>
+
+              <div data-controller="informe-delete"
+                   data-informe-delete-url-value="<%= informe_path(informe) %>"
+                   data-informe-delete-texto-value="Se eliminará el registro de <%= informe.mandante_nombre.presence || 'este mandante' %>. Esta acción no se puede deshacer.">
+                <button type="button"
+                        data-action="informe-delete#confirmar"
+                        class="px-3 py-1 bg-red-600 hover:bg-red-700 text-gray-900 font-bold rounded-md cursor-pointer">
+                  Eliminar
+                </button>
+              </div>
             </div>
           </li>
         <% end %>
