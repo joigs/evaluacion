@@ -1,0 +1,107 @@
+<%= form_with(model: informe, builder: CustomFormBuilder, local: true, class: "space-y-4") do |form| %>
+  <% if informe.errors.any? %>
+    <% error_messages = informe.errors.full_messages.map { |msg| "<li>#{j msg}</li>" }.join %>
+    <%= javascript_tag do %>
+      Swal.fire({
+      icon: 'error',
+      title: 'Error: no se pudo guardar el registro',
+      html: '<ul style="text-align: left;">' + '<%= raw error_messages %>' + '</ul>',
+      confirmButtonText: 'Entendido'
+      })
+    <% end %>
+  <% end %>
+
+  <%
+    opciones = (@mandantes || []).map { |m| [m["nombre"], m["rut"]] }
+    if informe.mandante_rut.present? && opciones.none? { |(_, rut)| rut == informe.mandante_rut }
+      opciones.unshift(["#{informe.mandante_nombre} (fuera de la lista actual)", informe.mandante_rut])
+    end
+  %>
+
+  <div data-controller="mandante-select"
+       data-mandante-select-refresh-url-value="<%= refresh_mandantes_informes_path %>"
+       class="form-group">
+
+    <div class="flex items-center justify-between mb-1">
+      <%= form.label :mandante_rut, "Empresa mandante", class: "block text-gray-300" %>
+
+      <button type="button"
+              data-mandante-select-target="boton"
+              data-action="mandante-select#refresh"
+              class="px-3 py-1 text-sm bg-gray-700 hover:bg-gray-600 text-gray-200 rounded-md cursor-pointer">
+        Actualizar lista
+      </button>
+    </div>
+
+    <%= form.select :mandante_rut,
+                    options_for_select(opciones, informe.mandante_rut),
+                    { include_blank: "— Selecciona una empresa —" },
+                    class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md",
+                    data: {
+                      "mandante-select-target": "select",
+                      action: "change->mandante-select#sync"
+                    } %>
+
+    <%= form.hidden_field :mandante_nombre_fallback,
+                          value: informe.mandante_nombre,
+                          data: { "mandante-select-target": "nombre" } %>
+
+    <p data-mandante-select-target="estado" class="mt-1 text-sm text-gray-400"></p>
+
+    <% if @mandantes_error.present? %>
+      <p class="mt-1 text-sm text-red-400"><%= @mandantes_error %></p>
+    <% end %>
+  </div>
+
+  <div class="form-group">
+    <%= form.label :fecha, "Fecha", class: "block text-gray-300" %>
+    <%= form.text_field :fecha,
+                        placeholder: "Selecciona una fecha",
+                        value: informe.fecha&.strftime("%Y-%m-%d"),
+                        data: { controller: "datepicker" },
+                        class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+  </div>
+
+  <div data-controller="total-calc" class="space-y-4">
+    <div class="form-group">
+      <%= form.label :n_informes, "Número de informes", class: "block text-gray-300" %>
+      <%= form.number_field :n_informes,
+                            min: 0,
+                            step: 1,
+                            required: true,
+                            data: {
+                              "total-calc-target": "cantidad",
+                              action: "input->total-calc#calcular"
+                            },
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :valor_unitario, "Valor individual (UF)", class: "block text-gray-300" %>
+      <%= form.number_field :valor_unitario,
+                            min: 0,
+                            step: 0.01,
+                            required: true,
+                            data: {
+                              "total-calc-target": "valor",
+                              action: "input->total-calc#calcular"
+                            },
+                            class: "mt-1 block w-full px-3 py-2 bg-gray-700 text-white rounded-md" %>
+    </div>
+
+    <div class="form-group">
+      <label class="block text-gray-300">Valor total (UF)</label>
+      <input type="text"
+             readonly
+             tabindex="-1"
+             data-total-calc-target="output"
+             value="<%= number_with_precision(informe.total, precision: 2, delimiter: '.', separator: ',') %>"
+             class="mt-1 block w-full px-3 py-2 bg-gray-800 text-gray-300 rounded-md cursor-not-allowed border border-gray-700">
+    </div>
+  </div>
+
+  <div>
+    <%= form.submit submit_label,
+                    class: "w-full bg-blue-600 hover:bg-blue-700 text-gray-900 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer" %>
+  </div>
+<% end %>

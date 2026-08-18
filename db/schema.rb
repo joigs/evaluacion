@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_28_180751) do
+ActiveRecord::Schema[7.1].define(version: 2026_08_18_201526) do
   create_table "active_storage_attachments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -91,6 +91,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_28_180751) do
     t.float "pesos"
     t.string "empresa"
     t.integer "paso_actual"
+  end
+
+  create_table "informes", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "mandante_rut", null: false
+    t.string "mandante_nombre", null: false
+    t.date "fecha"
+    t.integer "month"
+    t.integer "year"
+    t.integer "n_informes", default: 0, null: false
+    t.decimal "valor_unitario", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "total", precision: 14, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mandante_rut"], name: "index_informes_on_mandante_rut"
+    t.index ["year", "month"], name: "index_informes_on_year_and_month"
   end
 
   create_table "ivas", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|

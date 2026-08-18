@@ -10,6 +10,13 @@ Rails.application.routes.draw do
         delete :destroy_records
       end
     end
+
+    resources :informes do
+      collection do
+        get :refresh_mandantes
+      end
+    end
+
     get "/service-worker.js" => "service_worker#service_worker"
     get "/manifest.json" => "service_worker#manifest"
 
