@@ -5,6 +5,9 @@ class InformesController < ApplicationController
   before_action :authorize_user
   before_action :load_mandantes,  only: [:new, :edit, :create, :update]
 
+  MANDANTE_RUT_N_CORTE = "85805200".freeze
+  DIA_CORTE            = 25
+
   def index
     @months = %w[Enero Febrero Marzo Abril Mayo Junio Julio Agosto Septiembre Octubre Noviembre Diciembre]
     @years  = (2025..Date.current.year).to_a.reverse
@@ -40,6 +43,8 @@ class InformesController < ApplicationController
     @informe = Informe.new(informe_params)
     @informe.mandante_nombre = resolve_mandante_nombre(@informe.mandante_rut)
 
+    ajustar_fecha_por_corte!(@informe)
+
     if @informe.save
       redirect_to @informe, notice: "Registro creado con éxito."
     else
@@ -52,6 +57,8 @@ class InformesController < ApplicationController
   def update
     @informe.assign_attributes(informe_params)
     @informe.mandante_nombre = resolve_mandante_nombre(@informe.mandante_rut)
+
+    ajustar_fecha_por_corte!(@informe)
 
     if @informe.save
       redirect_to @informe, notice: "Informe actualizado con éxito."
@@ -96,10 +103,28 @@ class InformesController < ApplicationController
     rut = rut.to_s.strip
     return nil if rut.blank?
 
-    encontrado = @mandantes.find { |m| m["rut"].to_s.strip == rut }
+    encontrado = find_mandante(rut)
     return encontrado["nombre"] if encontrado
 
     params.dig(:informe, :mandante_nombre_fallback).to_s.strip.presence
+  end
+
+  def find_mandante(rut)
+    rut = rut.to_s.strip
+    return nil if rut.blank?
+
+    (@mandantes || []).find { |m| m["rut"].to_s.strip == rut }
+  end
+
+  def ajustar_fecha_por_corte!(informe)
+    return if informe.fecha.blank?
+    return if informe.fecha.day <= DIA_CORTE
+
+    mandante = find_mandante(informe.mandante_rut)
+    return if mandante.nil?
+    return unless mandante["rut_n"].to_s.strip == MANDANTE_RUT_N_CORTE
+
+    informe.fecha = informe.fecha.next_month.beginning_of_month
   end
 
   def authorize_user
